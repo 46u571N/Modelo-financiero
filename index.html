@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spartan IT — Plataforma de inteligencia (app)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4EFE6; --surface:#FCFAF4; --surface-2:#F7F2E8; --ink:#1A1815;
+    --muted:#6B665B; --faint:#9A9384; --line:#E3DBCC; --line-strong:#D6CCB8;
+    --blue:#2643B8; --blue-deep:#1B3088; --blue-tint:#E7EAF8; --blue-tint-2:#D8DEF6;
+    --teal:#18756B; --teal-deep:#0F564E; --teal-tint:#DCEFEC;
+    --amber:#9A6A1E; --amber-tint:#F7ECD2; --rust:#A53A2C; --rust-tint:#F4DED9;
+    --off:#BAB2A1; --green-tint:#D6ECD9; --green-deep:#1E5631;
+    --radius:14px; --shadow:0 1px 2px rgba(26,24,21,.04), 0 8px 28px -18px rgba(26,24,21,.28);
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:'DM Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  .mono{font-family:'DM Mono',ui-monospace,'SF Mono',Menlo,monospace;}
+  .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);font-weight:600;margin:0 0 10px;}
+  h1{font-size:clamp(27px,4vw,42px);line-height:1.05;letter-spacing:-.02em;font-weight:800;margin:0 0 12px;max-width:20ch;}
+  h1 .accent{color:var(--blue);}
+  .lede{font-size:15.5px;color:var(--muted);margin:0;max-width:66ch;}
+  .rule{height:2px;background:var(--ink);margin:20px 0 0;width:54px;}
+
+  /* ---------- app shell ---------- */
+  .app{display:flex;min-height:100vh;}
+  .sidebar{width:240px;flex:none;background:var(--surface);border-right:1px solid var(--line);
+    padding:26px 16px;position:sticky;top:0;height:100vh;overflow:auto;}
+  .brand{font-weight:800;color:var(--blue);font-size:18px;margin:0;}
+  .brand small{display:block;color:var(--faint);font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;margin-top:3px;}
+  .nav{margin-top:26px;display:flex;flex-direction:column;gap:4px;}
+  .nav button{appearance:none;text-align:left;border:none;background:transparent;color:var(--ink);
+    font-family:inherit;font-size:14px;font-weight:500;padding:11px 12px;border-radius:9px;cursor:pointer;display:flex;gap:10px;align-items:center;}
+  .nav button:hover{background:var(--surface-2);}
+  .nav button[aria-current="true"]{background:var(--blue);color:#fff;}
+  .nav .n-num{font-family:'DM Mono',monospace;font-size:11px;opacity:.65;}
+  .side-foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:var(--faint);line-height:1.5;}
+  .content{flex:1;min-width:0;padding:38px 44px 80px;max-width:1160px;}
+  .section{display:none;}
+  .section.active{display:block;}
+  .sec-head{margin-bottom:30px;}
+  @media(max-width:860px){
+    .app{flex-direction:column;}
+    .sidebar{width:auto;height:auto;position:sticky;top:0;z-index:10;border-right:none;border-bottom:1px solid var(--line);
+      display:flex;align-items:center;gap:14px;overflow-x:auto;padding:12px 16px;}
+    .brand{white-space:nowrap;font-size:15px;} .brand small{display:none;}
+    .nav{flex-direction:row;margin-top:0;} .nav button{white-space:nowrap;padding:8px 12px;}
+    .side-foot{display:none;}
+    .content{padding:24px 18px 60px;}
+  }
+
+  /* ---------- PLAN ---------- */
+  .plan h2{font-size:21px;font-weight:800;color:var(--blue);letter-spacing:-.01em;margin:36px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line);}
+  .plan h3{font-size:15px;font-weight:700;color:var(--blue-deep);margin:20px 0 8px;}
+  .plan p{font-size:14.5px;color:var(--ink);margin:0 0 12px;line-height:1.62;}
+  .plan p.lead{font-size:16px;}
+  .plan ul,.plan ol{font-size:14.5px;color:var(--ink);padding-left:20px;margin:0 0 12px;}
+  .plan li{margin:5px 0;line-height:1.55;}
+  .plan table{width:100%;border-collapse:collapse;margin:8px 0 18px;}
+  .plan th{background:var(--ink);color:#fff;font-size:11px;letter-spacing:.05em;text-transform:uppercase;text-align:left;padding:9px 11px;}
+  .plan td{border-bottom:1px solid var(--line);padding:9px 11px;font-size:13px;vertical-align:top;}
+  .plan tr:nth-child(even) td{background:var(--surface-2);}
+  .plan td:first-child{font-weight:600;color:var(--blue-deep);}
+  .plan .callout{background:var(--amber-tint);border-left:4px solid #C9962E;border-radius:0 8px 8px 0;padding:12px 16px;margin:14px 0;font-size:13.5px;color:#6B4A12;line-height:1.55;}
+  .plan .flow{text-align:center;font-family:'DM Mono',monospace;color:var(--blue);font-weight:500;margin:6px 0;}
+  .plan .flow .arr{color:var(--faint);}
+  .plan .meta{color:var(--muted);font-style:italic;font-size:13px;}
+  .plan .tablewrap{overflow-x:auto;}
+
+  /* ---------- CONFIGURADOR ---------- */
+  .config .grid{display:grid;grid-template-columns:1fr;gap:26px;}
+  @media(min-width:980px){.config .grid{grid-template-columns:1.05fr .95fr;gap:34px;align-items:start;}}
+  .config .panel-label{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:600;margin:0 0 16px;}
+  .config .q{margin-bottom:20px;}
+  .config .q-title{font-size:15px;font-weight:600;margin:0 0 9px;display:flex;align-items:baseline;gap:8px;}
+  .config .q-title .tag{font-family:'DM Mono',monospace;font-size:11px;color:var(--blue);background:var(--blue-tint);padding:2px 7px;border-radius:6px;font-weight:500;}
+  .config .opts{display:flex;flex-wrap:wrap;gap:8px;}
+  .config .opt{appearance:none;border:1.5px solid var(--line-strong);background:var(--surface);color:var(--ink);
+    font-family:inherit;font-size:13.5px;font-weight:500;padding:9px 13px;border-radius:10px;cursor:pointer;transition:all .16s ease;line-height:1.2;}
+  .config .opt:hover{border-color:var(--blue);}
+  .config .opt:focus-visible{outline:2px solid var(--blue);outline-offset:2px;}
+  .config .opt[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 6px 16px -8px rgba(38,67,184,.6);}
+  .config .opt .sub{display:block;font-weight:400;font-size:11.5px;opacity:.72;margin-top:1px;}
+  .config .result{position:sticky;top:24px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+  .config .result-head{padding:20px 22px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--surface-2),var(--surface));display:flex;justify-content:space-between;align-items:flex-start;gap:14px;}
+  .config .seg-name{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:600;margin:0 0 4px;}
+  .config .seg-val{font-size:21px;font-weight:800;letter-spacing:-.01em;margin:0;}
+  .config .scen-badge{flex:none;min-width:54px;text-align:center;padding:10px 12px;border-radius:11px;background:var(--blue);color:#fff;}
+  .config .scen-badge .code{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;line-height:1;display:block;}
+  .config .scen-badge .lab{font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.82;margin-top:3px;display:block;}
+  .config .result-body{padding:20px 22px 22px;}
+  .config .scen-desc{font-size:13.5px;color:var(--muted);margin:0 0 18px;}
+  .config .evento{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border-radius:11px;background:var(--blue-tint);border:1.5px solid var(--blue-tint-2);margin-bottom:20px;}
+  .config .evento .lab{font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--blue);font-weight:600;}
+  .config .evento .val{font-size:15px;font-weight:700;color:var(--blue-deep);}
+  .config .chips-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:600;margin:0 0 10px;}
+  .config .chips{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:22px;}
+  .config .chip{border:1.5px solid var(--line);border-radius:11px;padding:11px 12px;background:var(--surface-2);transition:all .22s ease;}
+  .config .chip .c-name{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;}
+  .config .chip .dot{width:8px;height:8px;border-radius:50%;background:var(--off);flex:none;transition:all .22s ease;}
+  .config .chip .c-meta{font-size:11px;color:var(--faint);margin-top:3px;}
+  .config .chip[data-on="true"]{border-color:var(--blue-tint-2);background:var(--blue-tint);}
+  .config .chip[data-on="true"] .dot{background:var(--blue);box-shadow:0 0 0 3px var(--blue-tint-2);}
+  .config .chip[data-on="true"] .c-meta{color:var(--blue-deep);}
+  .config .chip[data-on="false"]{opacity:.55;}
+  .config .chip[data-on="false"] .c-name{text-decoration:line-through;text-decoration-color:var(--off);}
+  .config .chip[data-on="cond"]{border-color:var(--line-strong);background:var(--surface);}
+  .config .chip[data-on="cond"] .dot{background:var(--amber);box-shadow:0 0 0 3px var(--amber-tint);}
+  .config .chip[data-on="cond"] .c-meta{color:var(--amber);}
+  .config .spec{border-top:1px solid var(--line);padding:13px 0;}
+  .config .spec:last-of-type{border-bottom:1px solid var(--line);}
+  .config .spec .s-k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:600;margin:0 0 3px;}
+  .config .spec .s-v{font-size:13.5px;margin:0;}
+  .config .spec .s-v strong{font-weight:600;}
+  .config .flags{margin-top:18px;display:flex;flex-direction:column;gap:8px;}
+  .config .flag{display:flex;gap:9px;padding:10px 12px;border-radius:10px;font-size:12.5px;line-height:1.4;}
+  .config .flag .fi{font-family:'DM Mono',monospace;font-weight:500;flex:none;}
+  .config .flag.reg{background:var(--rust-tint);color:#6e261c;} .config .flag.reg .fi{color:var(--rust);}
+  .config .flag.cap{background:var(--amber-tint);color:#5e4212;} .config .flag.cap .fi{color:var(--amber);}
+  .config .flag.info{background:var(--blue-tint);color:var(--blue-deep);} .config .flag.info .fi{color:var(--blue);}
+  .config .flag.warn{background:var(--rust-tint);color:#6e261c;} .config .flag.warn .fi{color:var(--rust);}
+  .config .measure{margin-top:18px;background:var(--surface-2);border:1px dashed var(--line-strong);border-radius:11px;padding:13px 14px;}
+  .config .measure h4{margin:0 0 7px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);font-weight:600;}
+  .config .measure ul{margin:0;padding-left:17px;font-size:12.5px;color:var(--muted);}
+  .config .measure li{margin:2px 0;}
+  .config .card-foot{border-top:1px solid var(--line);background:var(--surface-2);padding:16px 22px;}
+  .config .foot-note{margin-top:34px;font-size:12px;color:var(--faint);max-width:72ch;border-top:1px solid var(--line);padding-top:16px;}
+  .config .foot-note strong{color:var(--muted);font-weight:600;}
+
+  /* ---------- MODELO ---------- */
+  .modelo .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px;margin-top:24px;}
+  .modelo .card h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);font-weight:600;margin:0 0 14px;}
+  .modelo table{border-collapse:collapse;width:100%;}
+  .modelo th,.modelo td{text-align:right;padding:8px 10px;font-size:13.5px;border-bottom:1px solid var(--line);}
+  .modelo th:first-child,.modelo td:first-child{text-align:left;font-weight:500;color:var(--ink);}
+  .modelo thead th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--ink);font-weight:600;}
+  .modelo thead th.seg{background:var(--blue);}
+  .modelo td.calc{color:var(--ink);}
+  .modelo input[type=number]{width:96px;border:1.5px solid var(--line-strong);background:var(--surface-2);color:var(--blue-deep);
+    font-family:'DM Mono',monospace;font-size:13px;font-weight:500;padding:6px 8px;border-radius:8px;text-align:right;}
+  .modelo input[type=number]:focus{outline:2px solid var(--blue);outline-offset:1px;border-color:var(--blue);}
+  .modelo .ltvcac-cell{font-weight:600;border-radius:7px;}
+  .modelo .ok{background:var(--green-tint);color:var(--green-deep);}
+  .modelo .mid{background:var(--amber-tint);color:#7a5a12;}
+  .modelo .bad{background:var(--rust-tint);color:#8c2d22;}
+  .modelo .fixedrow{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap;}
+  .modelo .fixedrow label{font-size:13.5px;font-weight:500;}
+  .modelo .cartera{display:grid;grid-template-columns:1fr;gap:12px;}
+  @media(min-width:640px){.modelo .cartera{grid-template-columns:1fr 1fr;}}
+  .modelo .stat{background:var(--surface-2);border-radius:11px;padding:13px 15px;}
+  .modelo .stat .k{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);font-weight:600;}
+  .modelo .stat .v{font-size:22px;font-weight:800;margin-top:3px;}
+  .modelo .stat .v.pos{color:var(--teal-deep);} .modelo .stat .v.neg{color:var(--rust);}
+  .modelo .be{font-size:12.5px;color:var(--muted);margin-top:6px;}
+  .modelo .heat{border-collapse:collapse;}
+  .modelo .heat td,.modelo .heat th{border:1px solid var(--line);text-align:center;padding:7px 9px;font-size:12.5px;}
+  .modelo .heat thead th{background:var(--blue);color:#fff;font-size:11px;}
+  .modelo .heat td.rowh{background:var(--surface-2);font-family:'DM Mono',monospace;color:var(--blue-deep);font-weight:500;text-align:right;}
+  .modelo .heat .cell{font-family:'DM Mono',monospace;font-weight:500;}
+  .modelo .moneda{margin-left:auto;display:flex;gap:6px;}
+  .modelo .mbtn{appearance:none;border:1.5px solid var(--line-strong);background:var(--surface);color:var(--ink);font-family:inherit;font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:8px;cursor:pointer;}
+  .modelo .mbtn[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .modelo .foot{margin-top:30px;font-size:12px;color:var(--faint);max-width:74ch;border-top:1px solid var(--line);padding-top:16px;}
+  .modelo .foot strong{color:var(--muted);}
+
+  .modelo .segsel button{padding:5px 11px;}
+  .modelo .phrases{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:16px;}
+  @media(min-width:760px){.modelo .phrases{grid-template-columns:repeat(3,1fr);}}
+  .modelo .phrase{background:var(--surface-2);border-radius:11px;padding:11px 13px;}
+  .modelo .phrase .k{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);font-weight:600;}
+  .modelo .phrase .v{font-size:17px;font-weight:800;margin-top:3px;color:var(--ink);}
+  .modelo .phrase .s{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.4;}
+  .modelo .phrase .s.warn{color:var(--rust);font-weight:600;}
+  .modelo .curvegrid{display:grid;grid-template-columns:1fr;gap:18px;}
+  @media(min-width:760px){.modelo .curvegrid{grid-template-columns:1fr 1fr;}}
+  .modelo .curvettl{font-size:12px;color:var(--faint);font-weight:600;margin:0 0 4px;}
+
+  .modelo .glossary{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-top:24px;overflow:hidden;}
+  .modelo .glossary summary{cursor:pointer;padding:15px 20px;font-size:13.5px;font-weight:600;color:var(--blue-deep);list-style:none;display:flex;align-items:center;gap:9px;}
+  .modelo .glossary summary::-webkit-details-marker{display:none;}
+  .modelo .glossary summary::before{content:"+";font-family:'DM Mono',monospace;font-size:16px;color:var(--blue);width:14px;text-align:center;}
+  .modelo .glossary[open] summary::before{content:"\2013";}
+  .modelo .glossary summary:hover{background:var(--surface-2);}
+  .modelo .gloss-body{padding:2px 20px 18px;border-top:1px solid var(--line);}
+  .modelo .gloss-body dl{margin:0;}
+  .modelo .gloss-body dt{font-weight:700;font-size:13.5px;color:var(--ink);margin-top:14px;}
+  .modelo .gloss-body dd{margin:3px 0 0;font-size:13.5px;color:var(--muted);line-height:1.55;}
+  .modelo .gloss-note{margin:16px 0 0;font-size:12px;color:var(--faint);border-top:1px solid var(--line);padding-top:12px;}
+
+  /* shared copy button */
+  .copy-btn{appearance:none;border:1.5px solid var(--blue);background:var(--blue);color:#fff;font-family:inherit;font-size:13.5px;font-weight:600;padding:11px 18px;border-radius:10px;cursor:pointer;transition:all .15s ease;}
+  .copy-btn:hover{background:var(--blue-deep);border-color:var(--blue-deep);}
+  .copy-btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px;}
+  .copy-btn.ok,.copy-btn.done{background:var(--surface);color:var(--blue);}
+  .config .copy-btn{width:100%;} .modelo .copy-btn{margin-top:18px;}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <p class="brand">Spartan IT<small>Plataforma de inteligencia</small></p>
+    <nav class="nav">
+      <button data-target="sec-plan" aria-current="true"><span class="n-num">01</span> Plan de negocio</button>
+      <button data-target="sec-config"><span class="n-num">02</span> Configurador de empaque</button>
+      <button data-target="sec-modelo"><span class="n-num">03</span> Modelo financiero</button>
+    </nav>
+    <div class="side-foot">Borrador de trabajo · v3 · confidencial. Las herramientas ordenan el empaque y la sensibilidad; los montos se fijan con el costo medido del piloto.</div>
+  </aside>
+  <main class="content">
+    <!-- ============ PLAN ============ -->
+    <section id="sec-plan" class="section plan active">
+      <div class="sec-head">
+        <p class="eyebrow">Spartan IT · documento de trabajo</p>
+        <h1>Plan de <span class="accent">negocio</span></h1>
+        <p class="lede">Plataforma de inteligencia empresarial especializada por dominios, para sectores regulados. v3 — producto, compliance legal, monetización, canal, OEM y finanzas.</p>
+        <div class="rule"></div>
+      </div>
+
+      <h2>1. Resumen ejecutivo</h2>
+      <p class="lead">Spartan no integra IA: <strong>vende una plataforma de inteligencia sobre los datos de un dominio, ya integrada al sistema del cliente y con la privacidad resuelta para sectores regulados.</strong></p>
+      <p>Un solo motor —ingesta de datos bajo las condiciones del dueño, indexado y respuesta a través de una capa de agente— se empaqueta como un producto distinto por vertical. El cliente no compra el motor; compra una respuesta a un dolor concreto, conectada a su sistema, sin que su dato regulado salga de donde tiene que estar.</p>
+      <p>Una consultora se valora por horas vendidas; una plataforma licenciable se valora por ingresos recurrentes y propiedad intelectual. Toda esta versión empuja hacia lo segundo.</p>
+      <p>La ventaja defensable no es el chat —el modelo de lenguaje es commodity— sino la combinación IA + integración profunda + privacidad/compliance para dominios regulados.</p>
+      <p>Dónde estamos:</p>
+      <ul>
+        <li><strong>Laboratorio:</strong> socio de diseño, core validado.</li>
+        <li><strong>Cerealera:</strong> primera prueba de replicabilidad y primer caso de canal vía ERP.</li>
+        <li><strong>Clínica:</strong> tercer vertical candidato, con dato de salud sensible.</li>
+      </ul>
+      <p class="meta">Las decisiones que quedan abiertas —y que son de Tomás— están en la sección 13.</p>
+
+      <h2>2. El producto: qué compra el cliente</h2>
+      <p>El cliente no compra MCP, PostgreSQL, embeddings ni agentes. Eso es la cocina. Compra una herramienta que le resuelve un dolor, y el producto se nombra desde su lado.</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Vertical</th><th>Qué compra</th><th>Conectado a</th><th>Evento facturable</th></tr></thead>
+        <tbody>
+          <tr><td>Laboratorio</td><td>Un asistente que responde consultas sobre resultados clínicos y documentación interna.</td><td>LIS / base clínica</td><td>estudio o consulta procesada</td></tr>
+          <tr><td>Cerealera</td><td>Un asistente administrativo por WhatsApp conectado al ERP.</td><td>ERP (Tango, Bejerman…)</td><td>factura / consulta interpretada</td></tr>
+          <tr><td>Clínica</td><td>Un copiloto para médicos y administrativos.</td><td>HIS / historia clínica</td><td>consulta clínica procesada</td></tr>
+        </tbody>
+      </table></div>
+      <p><strong>Cada fila es un producto.</strong> La columna del medio es el pitch; la de la derecha, el modelo de cobro (sección 6); la integración es parte del moat (sección 3).</p>
+
+      <h2>3. La ventaja defensable</h2>
+      <p>Si nos quedamos en “chat con IA”, somos un commodity más. La defensa real está en tres piezas que solo valen juntas:</p>
+      <ol>
+        <li><strong>IA aplicada al dominio</strong> — entiende el vocabulario y los datos de un laboratorio, una cerealera, una clínica.</li>
+        <li><strong>Integración profunda</strong> — enchufada al LIS / ERP / HIS del cliente, no un chat aislado.</li>
+        <li><strong>Privacidad y compliance</strong> — el dato regulado no sale de donde tiene que estar, con trazabilidad y base legal (sección 5).</li>
+      </ol>
+      <div class="callout"><strong>Reposicionamiento:</strong> no vendemos “un sistema con IA”, vendemos inteligencia compliant sobre los datos de un dominio regulado, ya integrada a su sistema. Eso vale mucho más y es mucho más difícil de copiar.</div>
+
+      <h2>4. Arquitectura: un core, muchos productos</h2>
+      <p>El core es un solo motor. Cada vertical es un producto empaquetado encima: módulos que comparten el mismo núcleo (ingesta → indexado → agente) y cambian configuración y conocimiento del dominio, no el código base.</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Módulo</th><th>Estado</th><th>Dato / sector</th><th>Prioridad</th></tr></thead>
+        <tbody>
+          <tr><td>Laboratorio AI</td><td>Validado</td><td>Salud — regulado</td><td>Ancla (hecho)</td></tr>
+          <tr><td>Cerealera AI</td><td>En curso</td><td>Logística — no personal</td><td>1ª replicabilidad</td></tr>
+          <tr><td>Clínica AI</td><td>Candidato</td><td>Salud — regulado</td><td>Siguiente</td></tr>
+          <tr><td>ERP AI (genérico)</td><td>Futuro</td><td>Transaccional</td><td>Vía canal/OEM</td></tr>
+          <tr><td>Municipio / Escuela AI</td><td>Narrativa</td><td>Público / educación</td><td>No abrir aún</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Configurabilidad sobre personalización</h3>
+      <p>Configurar, no personalizar. Cada vertical se monta con configuración —motor de reglas, modelo de datos flexible, API-first—, no con desarrollo a medida sobre el código base. Si cada cliente toca el código, no hay plataforma: hay consultoría disfrazada.</p>
+      <h3>Modular monolith, no microservicios</h3>
+      <p>Para un equipo chico, microservicios es complejidad prematura. Un modular monolith logra la misma modularidad sin el costo de orquestar servicios distribuidos. Si un módulo necesita escalar aparte, se extrae; no se arranca fragmentado.</p>
+      <h3>Tenencia y aislamiento por segmento</h3>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Segmento</th><th>Tenencia / aislamiento</th><th>Despliegue</th></tr></thead>
+        <tbody>
+          <tr><td>Quiosco</td><td>Multi-inquilino (base compartida, aislada por tenant)</td><td>Nube (A)</td></tr>
+          <tr><td>Intermedio</td><td>Instancia o esquema dedicado</td><td>Nube dedicada / leasing (A/C)</td></tr>
+          <tr><td>Regulado / grande</td><td>Base dedicada u on-premise</td><td>On-premise / leasing (B/C)</td></tr>
+        </tbody>
+      </table></div>
+
+      <h2>5. Compliance como producto: Spartan Privacy Gateway</h2>
+      <p>La privacidad deja de ser una restricción y pasa a ser una línea de producto vendible y recurrente. Sobre la capa de anonimización de Tomás, el Gateway expone anonimización y pseudonimización, control de qué sale a APIs externas, auditoría y trazabilidad, y DLP.</p>
+      <h3>La base legal que le da precisión</h3>
+      <ul>
+        <li><strong>La Ley 25.326 prohíbe transferir datos personales a países sin nivel de protección adecuado.</strong> EE.UU. no está en la lista; el dato pseudonimizado sigue siendo personal.</li>
+        <li><strong>En la práctica:</strong> mandar dato clínico a una API de IA en EE.UU. o a una región cloud en EE.UU. es transferencia internacional alcanzada por esa regla.</li>
+      </ul>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Camino</th><th>Cómo</th><th>Cuándo conviene</th></tr></thead>
+        <tbody>
+          <tr><td>Anonimizar antes de salir</td><td>El Gateway vuelve el dato irreversible antes de cualquier llamada externa.</td><td>Usar nube / LLM externo con dato de salud.</td></tr>
+          <tr><td>Inferencia local</td><td>Ollama / BGE-M3 on-premise: el dato nunca sale del edificio.</td><td>Salud sensible, máxima garantía.</td></tr>
+          <tr><td>Nube + instrumento legal</td><td>Región en país adecuado (UE, Uruguay); o cláusulas modelo de la AAIP + consentimiento si va a EE.UU.</td><td>Cuando on-premise no es viable.</td></tr>
+        </tbody>
+      </table></div>
+      <p>Qué hace el Gateway: <strong>no solo anonimiza, sino que administra y documenta a dónde va cada dato y con qué instrumento legal.</strong> Ese registro y trazabilidad es lo vendible.</p>
+      <div class="callout"><strong>Dos condiciones antes de venderlo.</strong> (1) Endurecer la capa de Tomás (tokens de demo secuenciales, el ternario muerto que siempre devolvía “SEGURO”, la contradicción del bearer auth). (2) Vender controles + auditabilidad, no garantía legal: el cliente y su asesor certifican; el alcance pasa por abogado.</div>
+
+      <h2>6. Modelo de monetización</h2>
+      <p>La base es modular —implementación, licencia, soporte e infraestructura por escenario—. Encima, el cobro por resultado como opción de primera clase.</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Modelo</th><th>Cómo se cobra</th><th>Cuándo conviene</th></tr></thead>
+        <tbody>
+          <tr><td>Licencia base por sede</td><td>Piso fijo mensual/anual por instalación</td><td>Previsibilidad de ingreso</td></tr>
+          <tr><td>Por volumen</td><td>Sigue al uso (consultas/documentos por mes)</td><td>Cuando la inferencia pesa</td></tr>
+          <tr><td>Por módulo de vertical</td><td>Por cada módulo activado</td><td>Catálogo de productos</td></tr>
+          <tr><td>Por unidad procesada</td><td>Por evento objetivo: factura, documento, estudio</td><td>El más fácil de vender</td></tr>
+        </tbody>
+      </table></div>
+      <p class="meta">“No pagás por usar el sistema. Pagás por cada factura procesada.”</p>
+      <h3>Créditos prepagos</h3>
+      <p>El cliente compra créditos por adelantado que se consumen con el uso: mejora la caja, desacopla precio de costo (ajustás cuánto cuesta una acción sin tocar la lista) y simplifica la factura.</p>
+      <h3>Palancas de margen sobre el costo de inferencia</h3>
+      <ul>
+        <li><strong>Ruteo de modelos:</strong> tareas simples a modelos baratos, los caros sólo cuando hacen falta.</li>
+        <li><strong>Caché de respuestas frecuentes:</strong> ya lo hacemos con el caching semántico.</li>
+        <li><strong>Colchón en el precio por unidad:</strong> que absorba fluctuaciones del costo del proveedor.</li>
+      </ul>
+      <div class="callout"><strong>El filo a desactivar en el cobro por resultado.</strong> Definir el evento como algo objetivo y contable (factura / documento / estudio procesado), no subjetivo (“consulta resuelta”). Y sólo después de medir el costo real por evento. La inferencia puede comerse del orden de un cuarto de los ingresos: tratarlo como objetivo de margen bruto a vigilar.</div>
+
+      <h2>7. Go-to-market: directo → canal → OEM</h2>
+      <p>Tres motores de venta, en secuencia. Cada uno escala más que el anterior y exige más madurez del producto.</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Motor</th><th>Quién vende</th><th>Nuestro rol</th><th>Tradeoff / cuándo</th></tr></thead>
+        <tbody>
+          <tr><td>Directo</td><td>Nosotros</td><td>Producto + implementación</td><td>Máximo aprendizaje, escala lenta. Es donde estamos.</td></tr>
+          <tr><td>Canal</td><td>El partner</td><td>La capa de IA sobre su sistema</td><td>Más alcance; margen compartido y riesgo de conflicto. La cerealera ya es el 1er caso.</td></tr>
+          <tr><td>OEM</td><td>El proveedor de software</td><td>Motor embebido (white-label)</td><td>Máxima escala; alto listón de ingeniería y nos desintermedia. Destino, no próximo paso.</td></tr>
+        </tbody>
+      </table></div>
+      <h3>El quiosco: dos ramas (decisión de Tomás)</h3>
+      <p>El quiosco es el segmento más difícil: margen por cliente mínimo, no aguanta venta directa ni alta a mano. Dos formas de resolverlo, abiertas a propósito.</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Rama</th><th>Alta + soporte L1</th><th>Inversión nuestra</th><th>Margen / relación</th></tr></thead>
+        <tbody>
+          <tr><td>A — Autoservicio</td><td>Nuestra (wizard, plantillas, docs, videos)</td><td>Alta (compite con el core)</td><td>Margen completo + relación directa</td></tr>
+          <tr><td>B — Canal liviano</td><td>Del partner (gestión, contador, integrador)</td><td>Baja</td><td>Margen compartido + relación del partner</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout"><strong>Disparador de decisión.</strong> Se elige con datos del primer caso: costo de alta y soporte por cliente chico, y si aparece un partner dispuesto a revender. Caveat de la rama B: sobre un precio chico el corte puede dejar al partner sin incentivo, y el contador es conservador — el producto igual necesita mantenimiento casi nulo del lado del partner.</div>
+      <h3>Canal ERP y OEM</h3>
+      <p><strong>Canal:</strong> los ERP ya tienen los clientes; nosotros la IA (Tango, Bejerman, Calipso, SAP Business One, Odoo). La cerealera es un caso de canal disfrazado. Watch-items: rev-share y conflicto con la venta directa.</p>
+      <p><strong>OEM:</strong> en vez de venderle a 100 laboratorios, le vendemos el motor a quien desarrolla el LIS / ERP / HIS y lo revende embebido:</p>
+      <p class="flow">Spartan AI Engine<br><span class="arr">↓</span><br>Proveedor de LIS / ERP / HIS<br><span class="arr">↓</span><br>100 clientes finales</p>
+      <div class="callout"><strong>Por qué OEM es el destino y no el próximo paso.</strong> Embeber el motor sube el listón de ingeniería (API/SDK limpio, white-label, multi-tenant, versionado, soporte al partner) y nos desintermedia del usuario final. Prerrequisito: core endurecido + 2-3 verticales probados.</div>
+
+      <h2>8. Licencia, servicios y soporte</h2>
+      <ul>
+        <li><strong>Licencia:</strong> uso del software, IP siempre nuestra; base por sede + volumen, módulo de vertical aparte del core.</li>
+        <li><strong>Servicios profesionales:</strong> implementación, integración, migración/OCR, capacitación. Facturados aparte, ingreso puntual.</li>
+        <li><strong>Soporte:</strong> recurrente, en niveles.</li>
+      </ul>
+      <h3>Protección de IP en on-premise (escenarios B y C)</h3>
+      <p>La IP es nuestra incluso cuando el binario vive en el cliente. Mecanismos: license key criptográfica con vencimiento, binario containerizado, ofuscación, chequeo periódico.</p>
+      <div class="callout"><strong>El filo crítico: el chequeo no puede ser un phone-home en tiempo real.</strong> Contradice la promesa de air-gap del pitch de salud. La validación de licencia tiene que ser offline / criptográfica y periódica, nunca un canal que pueda exfiltrar dato.</div>
+      <h3>Niveles de soporte</h3>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Nivel</th><th>Ancla (% lic./año)</th><th>Canal y horario</th><th>Respuesta objetivo</th></tr></thead>
+        <tbody>
+          <tr><td>Básico</td><td>~18%</td><td>Portal / email, hábil</td><td>Siguiente día hábil</td></tr>
+          <tr><td>Estándar</td><td>~22%</td><td>+ chat, hábil extendido</td><td>Pocas horas hábiles</td></tr>
+          <tr><td>Premium</td><td>~27%</td><td>Canal dedicado, ampliado</td><td>SLA por contrato</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout"><strong>El sesgo a corregir.</strong> Los servicios financian y validan, pero no son el negocio. El negocio es la licencia recurrente + el cobro por unidad + los módulos. Servicios como meta decreciente con tripwire, no tope rígido, apoyados en un partner de implementaciones.</div>
+
+      <h2>9. Escalabilidad: del quiosco al cliente grande</h2>
+      <p>El mismo producto sirve a dos economías opuestas: en el quiosco el margen viene del volumen de clientes; en el grande, de cada contrato. Misma imagen de core; cambian configuración, módulo y tenencia.</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Segmento</th><th>Despliegue</th><th>Pricing</th><th>Soporte</th><th>Onboarding</th></tr></thead>
+        <tbody>
+          <tr><td>Quiosco</td><td>Nube multi-inquilino (A)</td><td>Base chica + por unidad / créditos</td><td>Básico</td><td>Autoservicio o canal</td></tr>
+          <tr><td>Intermedio</td><td>Nube dedicada / leasing (A/C)</td><td>Licencia + volumen + módulo</td><td>Estándar</td><td>Asistido</td></tr>
+          <tr><td>Grande</td><td>On-premise / leasing (B/C)</td><td>Contrato anual a medida</td><td>Premium SLA</td><td>Proyecto</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Escenarios de despliegue</h3>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Esc.</th><th>Quién pone el fierro</th><th>Qué cobramos</th></tr></thead>
+        <tbody>
+          <tr><td>A — Nube</td><td>Nosotros. El dato sale del edificio.</td><td>Cuota todo-incluido (infra adentro).</td></tr>
+          <tr><td>B — Cliente</td><td>El cliente compra su fierro.</td><td>Solo licencia + soporte; inferencia a costo cero.</td></tr>
+          <tr><td>C — Leasing</td><td>Equipo en sitio vía integrador.</td><td>Cuota que mezcla alquiler + licencia + soporte.</td></tr>
+        </tbody>
+      </table></div>
+      <p class="meta">Sobre el leasing: que lo maneje un partner integrador y nosotros montamos la licencia encima; no cargar el riesgo de capital del fierro.</p>
+
+      <h2>10. Roadmap</h2>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Fase</th><th>Hito</th><th>Qué hacemos</th></tr></thead>
+        <tbody>
+          <tr><td>0 — Hecho</td><td>Laboratorio</td><td>Core endurecido y validado.</td></tr>
+          <tr><td>1 — En curso</td><td>Cerealera</td><td>1ª replicabilidad + 1er canal ERP (bot conectado al ERP, cobro por factura procesada).</td></tr>
+          <tr><td>2 — Próxima</td><td>2-3 verticales + Privacy Gateway</td><td>Empaquetar Clínica AI; productizar el Gateway; primer acuerdo de canal formal.</td></tr>
+          <tr><td>3 — Escala</td><td>OEM + marketplace</td><td>Motor embebible para proveedores de LIS/ERP/HIS; catálogo de módulos por dominio.</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Métricas de éxito del piloto (cerealera)</h3>
+      <ul>
+        <li><strong>Desvío:</strong> % de consultas repetitivas que el bot resuelve sin que intervenga Luciana.</li>
+        <li><strong>Ahorro:</strong> tiempo que le libera por semana.</li>
+        <li><strong>Volumen:</strong> consultas mensuales atendidas.</li>
+        <li><strong>Precisión:</strong> % de respuestas correctas sobre saldos, existencias y facturas.</li>
+        <li><strong>Satisfacción:</strong> del cliente final que consulta por WhatsApp.</li>
+        <li><strong>Costo real por consulta:</strong> el número que recién permite fijar el precio por unidad.</li>
+      </ul>
+
+      <h2>11. Modelo financiero (marco de sensibilidad)</h2>
+      <p>Pre-ingresos, el CAC y el LTV son adivinanzas: no es un pronóstico, es una herramienta para responder “qué tiene que ser verdad para que cierre”. El piloto convierte las adivinanzas en números.</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Segmento</th><th>Precio ref.*</th><th>Driver que define el cierre</th></tr></thead>
+        <tbody>
+          <tr><td>Quiosco</td><td>~150–400 USD/mes</td><td>Costo de alta + soporte casi nulo (autoservicio o canal)</td></tr>
+          <tr><td>Intermedio</td><td>~800–2.500 USD/mes</td><td>ARPU vs. costo de servir + churn</td></tr>
+          <tr><td>Grande</td><td>~4.000+ USD/mes + servicios</td><td>Valor/ROI capturado vs. costo de inferencia</td></tr>
+        </tbody>
+      </table></div>
+      <p class="meta">* Magnitudes de referencia, no costos propios: úsense como brackets de sanity-check, nunca como precio fijado. (El modelo vivo está en la pestaña 03.)</p>
+      <div class="callout"><strong>Decisión:</strong> definir pricing en USD vs. ARS (el USD es lo habitual en B2B local, pero hay que elegirlo).</div>
+
+      <h2>12. Riesgos y supuestos</h2>
+      <ul>
+        <li><strong>Cobro por resultado:</strong> evento objetivo y contable; precio recién con costo medido; híbrido base + por unidad / créditos.</li>
+        <li><strong>IP on-premise:</strong> validación de licencia offline/criptográfica, nunca phone-home.</li>
+        <li><strong>Compliance:</strong> vender controles + auditabilidad, no garantía legal; el dato pseudonimizado sigue siendo personal.</li>
+        <li><strong>OEM:</strong> listón de ingeniería alto y desintermediación; sólo tras 2-3 verticales probados.</li>
+        <li><strong>Canal:</strong> margen compartido y conflicto con venta directa.</li>
+        <li><strong>Quiosco:</strong> rama autoservicio vs. canal sin decidir.</li>
+        <li><strong>Arquitectura:</strong> modular monolith a propósito; evitar microservicios.</li>
+        <li><strong>Regulatorio:</strong> Ley 25.326 vigente (reforma en trámite); salud empuja a on-premise; cerealera maneja dato no personal.</li>
+      </ul>
+
+      <h2>13. Decisiones abiertas (de Tomás)</h2>
+      <ol>
+        <li><strong>Quiosco:</strong> rama A (autoservicio) vs. rama B (canal liviano).</li>
+        <li><strong>Pricing:</strong> en USD o en ARS.</li>
+        <li><strong>Privacy Gateway:</strong> cuándo endurecer la capa de anonimización para venderla con marca.</li>
+        <li><strong>Primer canal formal:</strong> sale de la cerealera (Tango/Bejerman) o se busca aparte.</li>
+        <li><strong>Servicios:</strong> meta y tripwire de % de facturación por servicios.</li>
+      </ol>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Eje</th><th>Antes</th><th>Qué lo mueve ahora</th></tr></thead>
+        <tbody>
+          <tr><td>Diferenciación</td><td>6/10</td><td>Producto por dominio + moat con base legal (25.326) + Privacy Gateway.</td></tr>
+          <tr><td>Modelo comercial</td><td>7/10</td><td>Cobro por unidad + créditos + canal/OEM; soporte anclado a % de licencia.</td></tr>
+          <tr><td>Producto</td><td>8/10</td><td>“Qué compra el cliente” explícito por vertical.</td></tr>
+          <tr><td>Escalabilidad</td><td>9/10</td><td>Core + módulos enchufables, tenencia por segmento; directo → canal → OEM.</td></tr>
+          <tr><td>Ejecución</td><td>—</td><td>KPIs del piloto, modelo de sensibilidad, protección de IP, decisiones explícitas.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- ============ CONFIGURADOR ============ -->
+    <section id="sec-config" class="section config">
+      <div class="sec-head">
+        <p class="eyebrow">Spartan IT · herramienta comercial</p>
+        <h1>Configurador de <span class="accent">empaque</span></h1>
+        <p class="lede">Un solo producto, varios empaques. Elegí la situación del cliente y la herramienta arma el paquete: escenario de despliegue, qué se cobra, modelo de cobro y evento facturable, licencia, soporte y servicios.</p>
+        <div class="rule"></div>
+      </div>
+
+      <div class="grid">
+        <div aria-label="Situación del cliente">
+          <p class="panel-label">Situación del cliente</p>
+
+          <div class="q" data-q="residencia">
+            <p class="q-title"><span class="tag">dato</span> ¿El dato puede salir del edificio del cliente?</p>
+            <div class="opts">
+              <button class="opt" data-v="nube">Puede ir a la nube</button>
+              <button class="opt" data-v="onprem">Debe quedar on-premise</button>
+              <button class="opt" data-v="mixto">Mixto / a definir</button>
+            </div>
+          </div>
+
+          <div class="q" data-q="capital">
+            <p class="q-title"><span class="tag">fierro</span> ¿Quién pone el hardware de IA?</p>
+            <div class="opts">
+              <button class="opt" data-v="nosotros">Lo ponemos nosotros</button>
+              <button class="opt" data-v="cliente">El cliente compra su fierro</button>
+              <button class="opt" data-v="leasing">Leasing / a definir</button>
+            </div>
+          </div>
+
+          <div class="q" data-q="segmento">
+            <p class="q-title"><span class="tag">tamaño</span> Tamaño del cliente</p>
+            <div class="opts">
+              <button class="opt" data-v="quiosco">Quiosco <span class="sub">chico, bajo volumen</span></button>
+              <button class="opt" data-v="intermedio">Intermedio</button>
+              <button class="opt" data-v="grande">Grande</button>
+            </div>
+          </div>
+
+          <div class="q" data-q="etapa">
+            <p class="q-title"><span class="tag">etapa</span> Etapa comercial</p>
+            <div class="opts">
+              <button class="opt" data-v="piloto">Piloto</button>
+              <button class="opt" data-v="primeros">Primeros clientes</button>
+              <button class="opt" data-v="producto">Producto</button>
+            </div>
+          </div>
+
+          <div class="q" data-q="vertical">
+            <p class="q-title"><span class="tag">vertical</span> Vertical / tipo de dato</p>
+            <div class="opts">
+              <button class="opt" data-v="laboratorio">Laboratorio <span class="sub">salud</span></button>
+              <button class="opt" data-v="clinica">Clínica <span class="sub">salud</span></button>
+              <button class="opt" data-v="cerealera">Cerealera / logística</button>
+              <button class="opt" data-v="otro">Otro</button>
+            </div>
+          </div>
+
+          <div class="q" data-q="cobro">
+            <p class="q-title"><span class="tag">cobro</span> Modelo de cobro variable</p>
+            <div class="opts">
+              <button class="opt" data-v="hibrido">Híbrido <span class="sub">base + variable</span></button>
+              <button class="opt" data-v="volumen">Por volumen</button>
+              <button class="opt" data-v="unidad">Por unidad</button>
+              <button class="opt" data-v="creditos">Créditos prepagos</button>
+            </div>
+          </div>
+        </div>
+
+        <div aria-label="Empaque recomendado">
+          <div class="result">
+            <div class="result-head">
+              <div>
+                <p class="seg-name">Segmento</p>
+                <p class="seg-val" id="segVal">—</p>
+              </div>
+              <div class="scen-badge"><span class="code" id="scenCode">—</span><span class="lab">despliegue</span></div>
+            </div>
+            <div class="result-body">
+              <p class="scen-desc" id="scenDesc"></p>
+              <div class="evento"><span class="lab">Evento facturable</span><span class="val" id="eventoVal">—</span></div>
+              <p class="chips-label">Componentes que se cobran</p>
+              <div class="chips" id="chips">
+                <div class="chip" data-c="impl"><div class="c-name"><span class="dot"></span>Implementación</div><div class="c-meta">único</div></div>
+                <div class="chip" data-c="lic"><div class="c-name"><span class="dot"></span>Licencia</div><div class="c-meta">recurrente</div></div>
+                <div class="chip" data-c="sop"><div class="c-name"><span class="dot"></span>Soporte</div><div class="c-meta">recurrente</div></div>
+                <div class="chip" data-c="infra"><div class="c-name"><span class="dot"></span>Infraestructura</div><div class="c-meta" id="infraMeta">—</div></div>
+              </div>
+              <div class="spec"><p class="s-k">Estructura de licencia</p><p class="s-v" id="licModel"></p></div>
+              <div class="spec"><p class="s-k">Cobro</p><p class="s-v" id="cobroVal"></p></div>
+              <div class="spec"><p class="s-k">Soporte</p><p class="s-v" id="supTier"></p></div>
+              <div class="spec"><p class="s-k">Servicios profesionales</p><p class="s-v" id="servScope"></p></div>
+              <div class="flags" id="flags"></div>
+              <div id="measureWrap"></div>
+            </div>
+            <div class="card-foot">
+              <button class="copy-btn" id="copyBtnC">Copiar resumen para Claude</button>
+              <p class="copy-hint">Pegalo en una conversación nueva para retomar el pricing de este cliente.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="foot-note"><strong>Nota.</strong> Los precios no se cierran acá: el modelo real se fija con el costo medido del primer despliegue. Esta herramienta ordena el <em>empaque</em> (qué se cobra, cómo y sobre qué evento), no los montos. “Quiosco” = extremo chico del espectro, no un rubro literal.</p>
+    </section>
+
+    <!-- ============ MODELO ============ -->
+    <section id="sec-modelo" class="section modelo">
+      <div class="sec-head">
+        <p class="eyebrow">Spartan IT · modelo financiero</p>
+        <h1>Modelo financiero <span class="accent">interactivo</span></h1>
+        <p class="lede">La versión viva del modelo: movés los supuestos y se recalculan unit economics, cartera, sensibilidad y el gráfico, al instante. Para compartir un archivo editable en Sheets, está la skill que genera el .xlsx.</p>
+        <div class="rule"></div>
+      </div>
+
+      <details class="glossary">
+        <summary>¿Qué significan estos términos? (CAC, LTV, churn…)</summary>
+        <div class="gloss-body">
+          <dl>
+            <dt>ARPU</dt><dd>Ingreso mensual por cliente: lo que te paga por mes.</dd>
+            <dt>Margen de contribución</dt><dd>ARPU − costo de servir (inferencia + soporte). Lo que deja cada cliente por mes, ya descontado lo que cuesta atenderlo.</dd>
+            <dt>CAC — costo de adquisición</dt><dd>Todo lo que gastás para conseguir un cliente nuevo: venta, marketing, demos, cierre. Es un gasto único, al inicio de la relación.</dd>
+            <dt>LTV — valor de vida del cliente</dt><dd>Cuánta plata te deja un cliente en total mientras se queda, ya neto del costo de atenderlo. No es lo que paga (eso es el ARPU), sino el margen de contribución mensual × la vida media.</dd>
+            <dt>LTV / CAC</dt><dd>¿Lo que gano de un cliente justifica lo que gasté en conseguirlo? Regla de pulgar: ≥ 3x es sano, &lt; 1x perdés plata en cada cliente. Por eso las celdas se pintan verde / ámbar / rojo.</dd>
+            <dt>Payback del CAC</dt><dd>Cuántos meses tardás en recuperar el CAC. Importa para la caja: aunque el LTV sea enorme, si tardás 18 meses en recuperarlo, financiás ese hueco mientras tanto. La implementación cobrada lo adelanta.</dd>
+            <dt>Vida media del cliente</dt><dd>Cuánto dura el cliente promedio: 1 ÷ churn mensual. Con churn 3% son ~33 meses.</dd>
+            <dt>Churn mensual</dt><dd>La tasa a la que los clientes se van: si retenés el 97% por mes, el churn es 3%. Es el supuesto que más mueve el LTV — bajarlo a la mitad duplica el LTV sin tocar nada más. Tres cuidados: es churn de clientes (no de ingresos); la unidad importa (3% mensual ≈ 30% anual); y conviene ser conservador (poner un churn más alto del deseado) hasta poder medirlo.</dd>
+          </dl>
+          <p class="gloss-note">Recordá: esto es una herramienta de sensibilidad, no un pronóstico. Los números cargados son magnitudes de referencia hasta tener el costo real del piloto.</p>
+        </div>
+      </details>
+
+      <div class="card">
+        <h2 style="display:flex;align-items:center;">Supuestos (editar)
+          <span class="moneda"><button class="mbtn" data-m="USD" aria-pressed="true">USD</button><button class="mbtn" data-m="ARS" aria-pressed="false">ARS</button></span>
+        </h2>
+        <div style="overflow-x:auto;">
+          <table id="inTable">
+            <thead><tr><th>Supuesto</th><th class="seg">Quiosco</th><th class="seg">Intermedio</th><th class="seg">Grande</th></tr></thead>
+            <tbody id="inBody"></tbody>
+          </table>
+        </div>
+        <div class="fixedrow">
+          <label for="fijos">Costos fijos mensuales del negocio</label>
+          <input type="number" id="fijos" value="9000" step="100" min="0">
+          <span class="mono" id="fijosCur" style="color:var(--faint);font-size:12px;">USD</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Resultados por segmento</h2>
+        <div style="overflow-x:auto;">
+          <table id="outTable">
+            <thead><tr><th>Métrica</th><th class="seg">Quiosco</th><th class="seg">Intermedio</th><th class="seg">Grande</th></tr></thead>
+            <tbody id="outBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Cartera y equilibrio</h2>
+        <div class="cartera">
+          <div class="stat"><div class="k">Contribución mensual total</div><div class="v pos" id="contribTotal">—</div></div>
+          <div class="stat"><div class="k">Resultado mensual del negocio</div><div class="v" id="resultado">—</div></div>
+        </div>
+        <p class="be" id="breakeven"></p>
+      </div>
+
+      <div class="card">
+        <h2>Visión rápida — contribución y salud por segmento</h2>
+        <div id="chart" role="img" aria-label="Barras de contribución mensual por segmento y línea de LTV/CAC con umbral de 3x."></div>
+      </div>
+
+      <div class="card">
+        <h2 style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;">Curvas por segmento — entender la función
+          <span class="segsel" id="segSel" style="margin-left:auto;display:flex;gap:6px;">
+            <button class="mbtn" data-seg="0">Quiosco</button>
+            <button class="mbtn" data-seg="1" aria-pressed="true">Intermedio</button>
+            <button class="mbtn" data-seg="2">Grande</button>
+          </span>
+        </h2>
+        <div id="phrases" class="phrases"></div>
+        <div class="curvegrid">
+          <div><p class="curvettl">Contribución/cliente vs precio — recta</p><div id="curvePrice" role="img" aria-label="Recta de contribución por cliente del segmento elegido según el precio mensual."></div></div>
+          <div><p class="curvettl">LTV/CAC vs churn — hipérbola</p><div id="curveChurn" role="img" aria-label="Hipérbola de LTV/CAC del segmento elegido según el churn mensual, con umbral de 3x."></div></div>
+        </div>
+        <p class="be">El punto azul es tu operación actual; se mueve cuando editás los supuestos. La recta del precio cruza cero en el costo de servir; la hipérbola del churn es empinada a la izquierda — ahí un cambio chico mueve mucho el LTV/CAC.</p>
+      </div>
+
+      <div class="card">
+        <h2 id="sensTitle">Sensibilidad — LTV/CAC del intermedio (churn × ARPU)</h2>
+        <div style="overflow-x:auto;"><table class="heat" id="heat"></table></div>
+        <p class="be">Verde ≥ 3x sano · ámbar 1–3x ajustado · rojo &lt; 1x no cierra.</p>
+      </div>
+
+      <button class="copy-btn" id="copyBtnM">Copiar resumen para Claude</button>
+
+      <p class="foot"><strong>Nota.</strong> Herramienta de sensibilidad, no pronóstico. Los valores cargados son magnitudes de referencia, no costos medidos: reemplazar con datos del piloto. El churn es el supuesto que más mueve el LTV — ser conservador.</p>
+    </section>
+
+  </main>
+</div>
+
+<script>
+/* ---------- navegación ---------- */
+(function(){
+  const btns=document.querySelectorAll(".nav button");
+  const secs=document.querySelectorAll(".section");
+  btns.forEach(b=>b.addEventListener("click",()=>{
+    const t=b.dataset.target;
+    secs.forEach(s=>s.classList.toggle("active", s.id===t));
+    btns.forEach(x=>x.setAttribute("aria-current", x===b?"true":"false"));
+    document.querySelector(".content").scrollTo({top:0,behavior:"smooth"});
+    window.scrollTo({top:0,behavior:"smooth"});
+  }));
+})();
+
+/* ---------- configurador ---------- */
+(function(){
+  let summaryText="";
+  const state = { residencia:"nube", capital:"nosotros", segmento:"intermedio", etapa:"piloto", vertical:"cerealera", cobro:"unidad" };
+  const root=document.getElementById("sec-config");
+
+  const LABELS = {
+    residencia:{nube:"Puede ir a la nube",onprem:"Debe quedar on-premise",mixto:"Mixto / a definir"},
+    capital:{nosotros:"Lo ponemos nosotros",cliente:"El cliente compra su fierro",leasing:"Leasing / a definir"},
+    segmento:{quiosco:"Quiosco (chico)",intermedio:"Intermedio",grande:"Grande"},
+    etapa:{piloto:"Piloto",primeros:"Primeros clientes",producto:"Producto"},
+    vertical:{laboratorio:"Laboratorio (salud)",clinica:"Clínica (salud)",cerealera:"Cerealera / logística",otro:"Otro"},
+    cobro:{hibrido:"Híbrido (base + variable)",volumen:"Por volumen",unidad:"Por unidad procesada",creditos:"Créditos prepagos"}
+  };
+  const EVENTO = {
+    laboratorio:"estudio o consulta procesada",
+    clinica:"consulta clínica procesada",
+    cerealera:"factura o consulta interpretada",
+    otro:"documento o consulta procesada"
+  };
+  function isSalud(v){ return v==="laboratorio" || v==="clinica"; }
+  function cobroDesc(cobro, ev){
+    if(cobro==="hibrido") return "licencia base (cubre costos fijos) + variable por "+ev+"; no quedás a cero en un mes flojo.";
+    if(cobro==="volumen") return "tramos por cantidad de "+ev+" al mes, con descuento por volumen en los tramos altos.";
+    if(cobro==="unidad")  return "precio por cada "+ev+": objetivo, contable y el más fácil de vender.";
+    return "créditos prepagos que se consumen por cada "+ev+"; mejora la caja y desacopla el precio del costo.";
+  }
+  function compute(s){
+    let code, desc, infra;
+    if(s.residencia==="nube"){
+      if(s.capital==="cliente"){ code="B"; desc="El dato puede ir a la nube, pero el cliente igual quiere su propio fierro. Le instalás el software en su servidor: tu costo de inferencia es cero."; infra="off"; }
+      else { code="A"; desc="Hospedaje nuestro: la inferencia corre en nuestra infraestructura y el dato sale del edificio del cliente. Cuota todo-incluido."; infra="on"; }
+    } else if(s.residencia==="onprem"){
+      if(s.capital==="cliente"){ code="B"; desc="El dato queda en el cliente y el fierro lo pone él. El escenario más limpio para tu margen: cobrás casi todo software."; infra="off"; }
+      else if(s.capital==="leasing"){ code="C"; desc="El equipo vive en el cliente (dato no sale) pero entra como alquiler. Una cuota mezcla alquiler + licencia + soporte."; infra="on"; }
+      else if(s.capital==="nosotros"){ code="C"; desc="El dato debe quedar on-premise, así que no puede correr en nuestra nube: se asume equipo gestionado en sitio (formato leasing/managed)."; infra="on"; }
+      else { code="B/C"; desc="Dato on-premise, falta cerrar quién pone el fierro. Dejalo como cláusula abierta: B si lo compra el cliente, C si entra por leasing."; infra="cond"; }
+    } else {
+      code="A/B/C"; desc="Despliegue flexible: no elijas un modelo, dejalo como variable del contrato. El componente de infraestructura aparece o desaparece según cada caso."; infra="cond";
+    }
+    const comps = { impl:true, lic:true, sop:true, infra:infra };
+    let infraMeta = infra==="on" ? (code==="C"?"alquiler + cómputo":"incluida en la cuota") : (infra==="off"?"la pone el cliente":"condicional según contrato");
+    const ev = EVENTO[s.vertical];
+    let lic;
+    if(s.etapa==="piloto") lic="<strong>Cobrar como proyecto</strong>, no como producto. No fijes el precio comercial todavía.";
+    else if(s.segmento==="quiosco") lic="<strong>Licencia base chica por instalación + módulo de vertical.</strong> El margen viene del número de clientes.";
+    else if(s.segmento==="intermedio") lic="<strong>Licencia base + módulo de vertical.</strong>";
+    else lic="<strong>Contrato anual a medida</strong>: piso por sede + módulo de vertical.";
+    let cobroV;
+    if(s.etapa==="piloto") cobroV="<strong>Piloto: cobrar como proyecto.</strong> El modelo elegido ("+LABELS.cobro[s.cobro]+") es el diseño a validar; el valor por "+ev+" se fija recién con el costo medido.";
+    else cobroV="<strong>"+LABELS.cobro[s.cobro]+":</strong> "+cobroDesc(s.cobro, ev);
+    let sup;
+    if(s.segmento==="quiosco") sup="<strong>Básico.</strong> Parches, actualizaciones y mesa de ayuda en horario hábil (~18% de la licencia/año).";
+    else if(s.segmento==="intermedio") sup="<strong>Estándar.</strong> Monitoreo proactivo + revisiones periódicas (~22%).";
+    else sup="<strong>Premium</strong> con SLA contractual y canal dedicado (~27%).";
+    if(code==="B"||code==="C"||code==="B/C") sup += " Cotizar por encima: cada entorno on-premise es distinto.";
+    let serv;
+    if(s.etapa==="piloto") serv="Implementación facturada <strong>como proyecto</strong> + medición de costos reales durante el piloto.";
+    else serv="Tarifa fija de implementación + integración a sus sistemas";
+    if(isSalud(s.vertical) && s.etapa!=="piloto") serv += ", migración/OCR de históricos";
+    if(s.segmento==="grande" && s.etapa!=="piloto") serv += ", desarrollo a medida del módulo de vertical";
+    if(s.etapa!=="piloto") serv += ".";
+    const flags=[];
+    if(isSalud(s.vertical)){
+      flags.push({t:"reg",i:"§",x:"Dato de salud bajo Ley 25.326: empuja a on-premise. EE.UU. no es país adecuado y el dato pseudonimizado sigue siendo personal — mandarlo a una API/nube en EE.UU. es transferencia internacional."});
+      if(s.residencia==="nube") flags.push({t:"warn",i:"!",x:"Salud + nube: necesitás anonimización irreversible, región en país adecuado, o cláusulas modelo AAIP + consentimiento. Revisar antes de prometer escenario A."});
+    }
+    if(s.vertical==="cerealera"){
+      flags.push({t:"info",i:"i",x:"Inventario / stock = dato no personal: embedding y cobro por factura procesada en nube sin problema legal."});
+    }
+    if(s.cobro==="creditos" && s.etapa!=="piloto"){
+      flags.push({t:"info",i:"i",x:"Créditos: cobrás por adelantado (mejor caja) y podés ajustar cuánto cuesta una acción si sube el costo del proveedor, sin tocar la lista."});
+    }
+    if(s.cobro==="unidad" && s.etapa!=="piloto"){
+      flags.push({t:"info",i:"i",x:"Por unidad: mantené el evento objetivo y contable ("+ev+"), nunca “consulta resuelta”, que invita a disputas."});
+    }
+    if(code==="C"||s.capital==="leasing"){
+      flags.push({t:"cap",i:"$",x:"Leasing inmoviliza capital o exige una financiera. Canalizalo por un integrador y montá la licencia encima; no cargues el riesgo del fierro."});
+    }
+    if(s.residencia==="onprem" && s.capital==="nosotros"){
+      flags.push({t:"warn",i:"!",x:"“On-premise” + “lo ponemos nosotros” no es nube nuestra: se interpreta como hardware gestionado en sitio (C)."});
+    }
+    let measure=null;
+    if(s.etapa==="piloto") measure=["Costo real de inferencia por "+ev,"Mezcla de consultas: livianas vs. pesadas","Volumen mensual efectivo","Costo de soporte del entorno"];
+    return {code,desc,comps,infraMeta,ev,lic,cobroV,sup,serv,flags,measure};
+  }
+  function strip(html){ return html.replace(/<[^>]+>/g,""); }
+  function render(){
+    const r = compute(state);
+    root.querySelector("#segVal").textContent = LABELS.segmento[state.segmento];
+    root.querySelector("#scenCode").textContent = r.code;
+    root.querySelector("#scenDesc").textContent = r.desc;
+    root.querySelector("#eventoVal").textContent = r.ev;
+    root.querySelector("#scenCode").style.fontSize = r.code.length>2 ? "15px" : "22px";
+    const chipState={impl:"true",lic:"true",sop:"true",infra:r.comps.infra==="on"?"true":(r.comps.infra==="off"?"false":"cond")};
+    root.querySelectorAll(".chip").forEach(ch=>ch.setAttribute("data-on", chipState[ch.dataset.c]));
+    root.querySelector("#infraMeta").textContent = r.infraMeta;
+    root.querySelector("#licModel").innerHTML = r.lic;
+    root.querySelector("#cobroVal").innerHTML = r.cobroV;
+    root.querySelector("#supTier").innerHTML = r.sup;
+    root.querySelector("#servScope").innerHTML = r.serv;
+    root.querySelector("#flags").innerHTML = r.flags.map(f=>`<div class="flag ${f.t}"><span class="fi">${f.i}</span><span>${f.x}</span></div>`).join("");
+    const mw=root.querySelector("#measureWrap");
+    mw.innerHTML = r.measure ? `<div class="measure"><h4>Medir en el piloto</h4><ul>${r.measure.map(m=>`<li>${m}</li>`).join("")}</ul></div>` : "";
+    summaryText = buildSummary(r);
+  }
+  function buildSummary(r){
+    const comps = `Implementación ✓ · Licencia ✓ · Soporte ✓ · Infraestructura ${r.comps.infra==="on"?"✓":(r.comps.infra==="off"?"✗ (la pone el cliente)":"condicional")}`;
+    let out = "CONFIGURACIÓN DE EMPAQUE COMERCIAL — Plataforma Spartan IT\n(generado con el árbol de decisión)\n\n";
+    out += "ENTRADA\n";
+    out += "· Residencia del dato: "+LABELS.residencia[state.residencia]+"\n";
+    out += "· Hardware de IA: "+LABELS.capital[state.capital]+"\n";
+    out += "· Tamaño del cliente: "+LABELS.segmento[state.segmento]+"\n";
+    out += "· Etapa comercial: "+LABELS.etapa[state.etapa]+"\n";
+    out += "· Vertical / dato: "+LABELS.vertical[state.vertical]+"\n";
+    out += "· Modelo de cobro: "+LABELS.cobro[state.cobro]+"\n\n";
+    out += "RECOMENDACIÓN\n";
+    out += "· Segmento: "+LABELS.segmento[state.segmento]+"\n";
+    out += "· Escenario de despliegue: "+r.code+" — "+r.desc+"\n";
+    out += "· Componentes que se cobran: "+comps+"\n";
+    out += "· Evento facturable: "+r.ev+"\n";
+    out += "· Estructura de licencia: "+strip(r.lic)+"\n";
+    out += "· Cobro: "+strip(r.cobroV)+"\n";
+    out += "· Soporte: "+strip(r.sup)+"\n";
+    out += "· Servicios profesionales: "+strip(r.serv)+"\n";
+    if(r.flags.length){ out += "\nBANDERAS\n"; r.flags.forEach(f=>{ out += "· "+strip(f.x)+"\n"; }); }
+    if(r.measure){ out += "\nMEDIR EN EL PILOTO\n"; r.measure.forEach(m=>{ out += "· "+m+"\n"; }); }
+    out += "\nPARA RETOMAR: usá este bloque para que Claude siga afinando el pricing de este cliente (montos, unit economics, contrato).";
+    return out;
+  }
+  root.querySelectorAll(".q").forEach(q=>{
+    const key=q.dataset.q;
+    q.querySelectorAll(".opt").forEach(btn=>{
+      btn.addEventListener("click",()=>{ state[key]=btn.dataset.v; syncPressed(); render(); });
+    });
+  });
+  function syncPressed(){
+    root.querySelectorAll(".q").forEach(q=>{
+      const key=q.dataset.q;
+      q.querySelectorAll(".opt").forEach(btn=>btn.setAttribute("aria-pressed", btn.dataset.v===state[key] ? "true":"false"));
+    });
+  }
+  const copyBtn=root.querySelector("#copyBtnC");
+  copyBtn.addEventListener("click",async()=>{
+    const txt=summaryText||"";
+    try{ await navigator.clipboard.writeText(txt); }
+    catch(e){ const ta=document.createElement("textarea"); ta.value=txt; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy");}catch(_){} document.body.removeChild(ta); }
+    const orig=copyBtn.textContent; copyBtn.textContent="Copiado ✓"; copyBtn.classList.add("ok");
+    setTimeout(()=>{copyBtn.textContent=orig;copyBtn.classList.remove("ok");},1600);
+  });
+  syncPressed();
+  render();
+})();
+
+/* ---------- modelo financiero ---------- */
+(function(){
+  let summaryText="";
+  const root=document.getElementById("sec-modelo");
+  const SEG=["Quiosco","Intermedio","Grande"];
+  const DRIVERS=[
+    {k:"arpu",   label:"Precio / ARPU mensual",   step:50},
+    {k:"inf",    label:"Costo inferencia + infra", step:5},
+    {k:"sop",    label:"Costo de soporte",         step:5},
+    {k:"cac",    label:"CAC (adquisición, único)", step:50},
+    {k:"impl",   label:"Implementación (única)",   step:100},
+    {k:"churn",  label:"Churn mensual (%)",        step:0.5},
+    {k:"clientes",label:"Clientes (cantidad)",     step:1}
+  ];
+  const state={
+    arpu:[250,1500,5000], inf:[35,220,800], sop:[12,110,450],
+    cac:[150,1800,9000], impl:[0,1500,6000], churn:[5,3,1.5], clientes:[40,12,3],
+    fijos:9000, moneda:"USD"
+  };
+  let SYM="$";
+  let selSeg=1;
+  function money(v){ return SYM+Math.round(v).toLocaleString('es-AR'); }
+  function compute(){
+    const r={cs:[],contrib:[],margpct:[],vida:[],ltv:[],ltvcac:[],payback:[],arr:[],contribSeg:[],be:[]};
+    for(let i=0;i<3;i++){
+      const cs=state.inf[i]+state.sop[i];
+      const contrib=state.arpu[i]-cs;
+      const ch=state.churn[i]/100;
+      const vida=ch>0?1/ch:0;
+      const ltv=contrib*vida;
+      r.cs.push(cs); r.contrib.push(contrib);
+      r.margpct.push(state.arpu[i]>0?contrib/state.arpu[i]:0);
+      r.vida.push(vida); r.ltv.push(ltv);
+      r.ltvcac.push(state.cac[i]>0?ltv/state.cac[i]:0);
+      r.payback.push(contrib>0?Math.max(0,(state.cac[i]-state.impl[i])/contrib):null);
+      r.arr.push(state.arpu[i]*12);
+      r.contribSeg.push(contrib*state.clientes[i]);
+      r.be.push(contrib>0?Math.ceil(state.fijos/contrib):null);
+    }
+    r.contribTotal=r.contribSeg.reduce((a,b)=>a+b,0);
+    r.resultado=r.contribTotal-state.fijos;
+    return r;
+  }
+  function buildInputs(){
+    const tb=root.querySelector("#inBody"); tb.innerHTML="";
+    DRIVERS.forEach(d=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML=`<td>${d.label}</td>`+SEG.map((_,i)=>
+        `<td><input type="number" data-k="${d.k}" data-i="${i}" step="${d.step}" value="${state[d.k][i]}"></td>`).join("");
+      tb.appendChild(tr);
+    });
+    tb.addEventListener("input",e=>{
+      const t=e.target; if(t.tagName!=="INPUT")return;
+      const v=parseFloat(t.value); state[t.dataset.k][+t.dataset.i]=isNaN(v)?0:v; render();
+    });
+  }
+  function clsLtv(x){ return x>=3?"ok":(x<1?"bad":"mid"); }
+  function render(){
+    const r=compute();
+    const rows=[
+      ["Costo de servir mensual", r.cs.map(money)],
+      ["Margen de contribución",  r.contrib.map(money)],
+      ["Margen de contribución %", r.margpct.map(v=>(v*100).toFixed(1)+"%")],
+      ["Vida media (meses)",      r.vida.map(v=>v.toFixed(1))],
+      ["LTV",                     r.ltv.map(money)],
+      ["LTV / CAC",               r.ltvcac.map(v=>({t:v.toFixed(1)+"x",c:clsLtv(v)}))],
+      ["Payback CAC (meses)",     r.payback.map(v=>v==null?"—":v.toFixed(1))],
+      ["ARR por cliente",         r.arr.map(money)],
+      ["Contribución del segmento", r.contribSeg.map(money)]
+    ];
+    const tb=root.querySelector("#outBody"); tb.innerHTML="";
+    rows.forEach(([lab,vals])=>{
+      const tr=document.createElement("tr");
+      let cells=`<td>${lab}</td>`;
+      vals.forEach(v=>{ if(typeof v==="object") cells+=`<td><span class="ltvcac-cell ${v.c}" style="padding:3px 8px;">${v.t}</span></td>`;
+        else cells+=`<td class="calc">${v}</td>`; });
+      tr.innerHTML=cells; tb.appendChild(tr);
+    });
+    root.querySelector("#contribTotal").textContent=money(r.contribTotal);
+    const res=root.querySelector("#resultado");
+    res.textContent=(r.resultado<0?"-":"")+money(Math.abs(r.resultado));
+    res.className="v "+(r.resultado>=0?"pos":"neg");
+    root.querySelector("#breakeven").innerHTML=
+      "Clientes de equilibrio si todo fuera de un segmento: "+
+      SEG.map((s,i)=>`<b>${s}</b> ${r.be[i]==null?"—":r.be[i]}`).join(" · ");
+    drawChart(r); drawHeat(); drawCurves(r); renderPhrases(r);
+    summaryText=buildSummary(r);
+  }
+  function drawChart(r){
+    const W=660,H=300,ml=58,mr=48,mt=18,mb=46, pw=W-ml-mr, ph=H-mt-mb;
+    const maxL=Math.max(...r.contribSeg,1)*1.15;
+    const maxR=Math.max(Math.max(...r.ltvcac)*1.25,4);
+    const band=pw/3;
+    const yL=v=>mt+ph*(1-v/maxL), yR=v=>mt+ph*(1-v/maxR);
+    const cx=i=>ml+band*i+band/2;
+    let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans, sans-serif">`;
+    for(let g=0;g<=4;g++){ const y=mt+ph*g/4; s+=`<line x1="${ml}" y1="${y}" x2="${ml+pw}" y2="${y}" stroke="#E3DBCC" stroke-width="1"/>`;
+      s+=`<text x="${ml-8}" y="${y+4}" text-anchor="end" font-size="10" fill="#9A9384">${SYM}${Math.round(maxL*(1-g/4)/1000)}k</text>`; }
+    for(let t=0;t<=3;t++){ const val=maxR*t/3; s+=`<text x="${ml+pw+8}" y="${yR(val)+4}" font-size="10" fill="#854F0B">${val.toFixed(0)}x</text>`; }
+    const bw=band*0.42;
+    r.contribSeg.forEach((v,i)=>{ const x=cx(i)-bw/2,y=yL(v);
+      s+=`<rect x="${x}" y="${y}" width="${bw}" height="${mt+ph-y}" fill="#1D9E75" rx="3"/>`;
+      s+=`<text x="${cx(i)}" y="${y-6}" text-anchor="middle" font-size="11" font-weight="600" fill="#0F564E">${money(v)}</text>`; });
+    const ty=yR(3); s+=`<line x1="${ml}" y1="${ty}" x2="${ml+pw}" y2="${ty}" stroke="#888780" stroke-width="1.4" stroke-dasharray="6 4"/>`;
+    s+=`<text x="${ml+pw}" y="${ty-5}" text-anchor="end" font-size="10" fill="#5F5E5A">umbral 3x</text>`;
+    let pts=r.ltvcac.map((v,i)=>`${cx(i)},${yR(v)}`).join(" ");
+    s+=`<polyline points="${pts}" fill="none" stroke="#BA7517" stroke-width="2.5"/>`;
+    r.ltvcac.forEach((v,i)=>{ s+=`<circle cx="${cx(i)}" cy="${yR(v)}" r="5" fill="#BA7517"/>`;
+      s+=`<text x="${cx(i)}" y="${yR(v)-10}" text-anchor="middle" font-size="11" font-weight="600" fill="#854F0B">${v.toFixed(1)}x</text>`; });
+    SEG.forEach((nm,i)=>{ s+=`<text x="${cx(i)}" y="${H-16}" text-anchor="middle" font-size="12" fill="#1A1815">${nm}</text>`; });
+    s+=`<text x="${ml}" y="${H-2}" font-size="10.5" fill="#0F564E">■ contribución</text>`;
+    s+=`<text x="${ml+150}" y="${H-2}" font-size="10.5" fill="#854F0B">● LTV/CAC</text>`;
+    s+=`</svg>`;
+    root.querySelector("#chart").innerHTML=s;
+  }
+  function drawHeat(){
+    const cs=state.inf[1]+state.sop[1], cac=state.cac[1];
+    const arpus=[800,1100,1500,2000,2500], churns=[1,2,3,4,5,6,8];
+    let h=`<thead><tr><th>churn ↓ / ARPU →</th>${arpus.map(a=>`<th>${SYM}${a.toLocaleString('es-AR')}</th>`).join("")}</tr></thead><tbody>`;
+    churns.forEach(ch=>{ h+=`<tr><td class="rowh">${ch}%</td>`;
+      arpus.forEach(a=>{ const v=cac>0?((a-cs)*(1/(ch/100)))/cac:0; const c=clsLtv(v);
+        h+=`<td class="cell ${c}">${v.toFixed(1)}x</td>`; }); h+="</tr>"; });
+    h+="</tbody>"; root.querySelector("#heat").innerHTML=h;
+    root.querySelector("#sensTitle").textContent="Sensibilidad — LTV/CAC del "+SEG[1]+" (churn × ARPU)";
+  }
+  function buildSummary(r){
+    let o="MODELO FINANCIERO — Spartan IT (interactivo, "+state.moneda+")\n\nSUPUESTOS (Quiosco / Intermedio / Grande)\n";
+    o+="· ARPU: "+state.arpu.map(money).join(" / ")+"\n";
+    o+="· Costo servir: "+r.cs.map(money).join(" / ")+"\n";
+    o+="· CAC: "+state.cac.map(money).join(" / ")+"  | Implementación: "+state.impl.map(money).join(" / ")+"\n";
+    o+="· Churn mensual: "+state.churn.map(v=>v+"%").join(" / ")+"  | Clientes: "+state.clientes.join(" / ")+"\n";
+    o+="· Costos fijos: "+money(state.fijos)+"\n\nRESULTADOS\n";
+    o+="· Margen contribución: "+r.contrib.map(money).join(" / ")+"\n";
+    o+="· LTV: "+r.ltv.map(money).join(" / ")+"\n";
+    o+="· LTV/CAC: "+r.ltvcac.map(v=>v.toFixed(1)+"x").join(" / ")+"\n";
+    o+="· Payback (meses): "+r.payback.map(v=>v==null?"—":v.toFixed(1)).join(" / ")+"\n";
+    o+="· Contribución por segmento: "+r.contribSeg.map(money).join(" / ")+"\n\nCARTERA\n";
+    o+="· Contribución total: "+money(r.contribTotal)+"  | Resultado mensual: "+(r.resultado<0?"-":"")+money(Math.abs(r.resultado))+"\n";
+    o+="\nPARA RETOMAR: pegá este bloque para que Claude siga con montos, contrato o el deck.";
+    return o;
+  }
+  root.querySelectorAll(".mbtn").forEach(b=>b.addEventListener("click",()=>{
+    state.moneda=b.dataset.m; SYM="$";
+    root.querySelectorAll(".mbtn").forEach(x=>x.setAttribute("aria-pressed", x===b?"true":"false"));
+    root.querySelector("#fijosCur").textContent=state.moneda; render();
+  }));
+  root.querySelector("#fijos").addEventListener("input",e=>{ const v=parseFloat(e.target.value); state.fijos=isNaN(v)?0:v; render(); });
+  const cb=root.querySelector("#copyBtnM");
+  cb.addEventListener("click",async()=>{
+    try{ await navigator.clipboard.writeText(summaryText||""); }
+    catch(e){ const ta=document.createElement("textarea"); ta.value=summaryText||""; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy");}catch(_){} document.body.removeChild(ta); }
+    const o=cb.textContent; cb.textContent="Copiado ✓"; cb.classList.add("done"); setTimeout(()=>{cb.textContent=o;cb.classList.remove("done");},1500);
+  });
+  function niceCeil(v){ if(!(v>0))return 1; const p=Math.pow(10,Math.floor(Math.log10(v))); return Math.ceil(v/p)*p; }
+  function moneyTick(maxAbs){ return maxAbs>=2000 ? (v=>SYM+(Math.round(v/100)/10)+"k") : (v=>SYM+Math.round(v)); }
+  function curveSVG(o){
+    const W=340,H=210,ml=48,mr=12,mt=12,pw=W-ml-mr,ph=H-mt-34;
+    const xs=v=>ml+pw*(v-o.xMin)/(o.xMax-o.xMin);
+    const ys=v=>mt+ph*(1-(v-o.yMin)/(o.yMax-o.yMin));
+    let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans, sans-serif">`;
+    for(let g=0;g<=4;g++){ const yv=o.yMin+(o.yMax-o.yMin)*g/4, y=ys(yv);
+      s+=`<line x1="${ml}" y1="${y}" x2="${ml+pw}" y2="${y}" stroke="#E3DBCC" stroke-width="1"/>`;
+      s+=`<text x="${ml-6}" y="${y+4}" text-anchor="end" font-size="10" fill="#9A9384">${o.yfmt(yv)}</text>`; }
+    for(let g=0;g<=4;g++){ const xv=o.xMin+(o.xMax-o.xMin)*g/4, x=xs(xv);
+      s+=`<text x="${x}" y="${H-12}" text-anchor="middle" font-size="10" fill="#9A9384">${o.xfmt(xv)}</text>`; }
+    (o.hlines||[]).forEach(h=>{ if(h.y>=o.yMin&&h.y<=o.yMax){ const y=ys(h.y);
+      s+=`<line x1="${ml}" y1="${y}" x2="${ml+pw}" y2="${y}" stroke="#888780" stroke-width="1.3" stroke-dasharray="6 4"/>`;
+      s+=`<text x="${ml+pw}" y="${y-4}" text-anchor="end" font-size="9.5" fill="#5F5E5A">${h.label}</text>`; } });
+    const pts=o.points.filter(p=>p.x>=o.xMin&&p.x<=o.xMax).map(p=>`${xs(p.x).toFixed(1)},${ys(p.y).toFixed(1)}`).join(" ");
+    s+=`<polyline points="${pts}" fill="none" stroke="${o.color}" stroke-width="2.5" stroke-linejoin="round"/>`;
+    (o.markers||[]).forEach(m=>{ if(m.x>=o.xMin&&m.x<=o.xMax){ const x=xs(m.x),y=ys(m.y);
+      if(y>=mt-2&&y<=mt+ph+2){
+        if(m.shape==="diamond"){ const r=6; s+=`<polygon points="${x},${y-r} ${x+r},${y} ${x},${y+r} ${x-r},${y}" fill="${m.color}"/>`; }
+        else { s+=`<circle cx="${x}" cy="${y}" r="4.5" fill="${m.color}"/>`; } } } });
+    s+=`</svg>`; return s;
+  }
+  function drawCurves(r){
+    const i=selSeg, cost=state.inf[i]+state.sop[i], arpu=state.arpu[i], cac=state.cac[i], contrib=arpu-cost, chn=state.churn[i];
+    const xMaxP=Math.max(niceCeil(Math.max(arpu*1.8,cost*1.4,600)),600);
+    const yMinR=Math.min(-cost,0), yMaxR=xMaxP-cost, padP=((yMaxR-yMinR)*0.08)||1, fmtP=moneyTick(Math.max(xMaxP,Math.abs(yMaxR)));
+    root.querySelector("#curvePrice").innerHTML=curveSVG({
+      points:[{x:0,y:-cost},{x:xMaxP,y:xMaxP-cost}],color:"#1D9E75",
+      xMin:0,xMax:xMaxP,yMin:yMinR-padP,yMax:yMaxR+padP,
+      hlines:[{y:0,label:"contribución 0"}],
+      markers:[{x:arpu,y:contrib,shape:"diamond",color:"#185FA5"},{x:cost,y:0,shape:"circle",color:"#888780"}],
+      xfmt:fmtP,yfmt:fmtP});
+    if(contrib>0 && cac>0){
+      const K=contrib*100/cac, crossing=K/3, xMinC=Math.max(0.5,Math.min(1,chn));
+      let xMaxC=Math.max(crossing*1.25,chn*1.6,12); xMaxC=Math.min(Math.max(Math.ceil(xMaxC),12),45);
+      const pts=[],steps=60; for(let k=0;k<=steps;k++){ const x=xMinC+(xMaxC-xMinC)*k/steps; pts.push({x,y:K/x}); }
+      const yMaxC=K/xMinC, padC=yMaxC*0.08;
+      root.querySelector("#curveChurn").innerHTML=curveSVG({
+        points:pts,color:"#BA7517",xMin:xMinC,xMax:xMaxC,yMin:0,yMax:yMaxC+padC,
+        hlines:[{y:3,label:"umbral 3x"}],
+        markers:[{x:chn,y:K/chn,shape:"diamond",color:"#185FA5"}],
+        xfmt:v=>Math.round(v)+"%",yfmt:v=>Math.round(v)+"x"});
+    } else {
+      root.querySelector("#curveChurn").innerHTML='<p style="font-size:12.5px;color:var(--muted);padding:24px 0;">Con margen de contribución ≤ 0, la curva no es útil: el precio primero tiene que superar el costo de servir.</p>';
+    }
+  }
+  function renderPhrases(r){
+    const i=selSeg, cost=state.inf[i]+state.sop[i], arpu=state.arpu[i], cac=state.cac[i], contrib=arpu-cost, chn=state.churn[i];
+    const maxChurn=(contrib>0&&cac>0)?(contrib*100)/(3*cac):null, be=r.be[i], over=(maxChurn!=null&&chn>maxChurn);
+    const ph=[
+      {k:"Precio mínimo viable",v:money(cost),s:"hoy "+money(arpu)+" → margen "+money(contrib)+" ("+(arpu>0?(contrib/arpu*100).toFixed(0):0)+"%)"},
+      {k:"Churn máx. para 3x",v:maxChurn!=null?maxChurn.toFixed(1)+"%":"—",s:maxChurn!=null?("hoy "+chn+"% → "+r.ltvcac[i].toFixed(1)+"x"+(over?" · ¡estás por encima!":"")):"margen negativo",warn:over},
+      {k:"Equilibrio",v:be!=null?be+" clientes":"—",s:"de tipo "+SEG[i]+" cubren "+money(state.fijos)+" de fijos"}
+    ];
+    root.querySelector("#phrases").innerHTML=ph.map(p=>`<div class="phrase"><div class="k">${p.k}</div><div class="v">${p.v}</div><div class="s${p.warn?' warn':''}">${p.s}</div></div>`).join("");
+  }
+  root.querySelectorAll("#segSel button").forEach(b=>b.addEventListener("click",()=>{
+    selSeg=+b.dataset.seg;
+    root.querySelectorAll("#segSel button").forEach(x=>x.setAttribute("aria-pressed", x===b?"true":"false"));
+    const r=compute(); drawCurves(r); renderPhrases(r);
+  }));
+  buildInputs(); render();
+})();
+</script>
+</body>
+</html>
