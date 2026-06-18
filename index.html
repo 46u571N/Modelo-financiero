@@ -208,7 +208,7 @@
     <p class="brand">Spartan IT<small>Plataforma de inteligencia</small></p>
     <nav class="nav">
       <button data-target="sec-plan" aria-current="true"><span class="n-num">01</span> Plan de negocio</button>
-      <button data-target="sec-config"><span class="n-num">02</span> Configurador de empaque</button>
+      <button data-target="sec-config"><span class="n-num">02</span> Creador de paquete</button>
       <button data-target="sec-modelo"><span class="n-num">03</span> Modelo financiero</button>
       <button data-target="sec-costo"><span class="n-num">04</span> Costo por evento</button>
     </nav>
@@ -499,7 +499,7 @@
     <section id="sec-config" class="section config">
       <div class="sec-head">
         <p class="eyebrow">Spartan IT · herramienta comercial</p>
-        <h1>Configurador de <span class="accent">empaque</span></h1>
+        <h1>Creador de <span class="accent">paquete</span></h1>
         <p class="lede">Un solo producto, varios empaques. Elegí la situación del cliente y la herramienta arma el paquete: escenario de despliegue, qué se cobra, modelo de cobro y evento facturable, licencia, soporte y servicios.</p>
         <div class="rule"></div>
       </div>
@@ -565,7 +565,7 @@
           </div>
         </div>
 
-        <div aria-label="Empaque recomendado">
+        <div aria-label="Paquete recomendado">
           <div class="result">
             <div class="result-head">
               <div>
@@ -693,7 +693,7 @@
 
       <button class="copy-btn" id="copyBtnM">Copiar resumen para Claude</button>
 
-      <p class="foot"><strong>Nota.</strong> Herramienta de sensibilidad, no pronóstico. Los valores cargados son magnitudes de referencia, no costos medidos: reemplazar con datos del piloto. El churn es el supuesto que más mueve el LTV — ser conservador.</p>
+      <p class="foot"><strong>Nota.</strong> Herramienta de sensibilidad, no pronóstico. Los valores cargados son magnitudes de referencia, no costos medidos: el costo de servir se reemplaza por el costo totalmente cargado real medido (ver pestaña 04) tras las primeras semanas del piloto. El churn es el supuesto que más mueve el LTV — ser conservador.</p>
     </section>
 
     <!-- ============ COSTO POR EVENTO ============ -->
@@ -729,11 +729,12 @@
 
       <h2>Qué se reporta (y por qué el p90)</h2>
       <p>El costo se reporta <strong>por tipo de consulta</strong> (saldo, stock, factura, interpretación), no como un único promedio. Y al lado del promedio se mira el <strong>percentil 90</strong>: si una de cada diez consultas es interpretativa y cuesta veinte veces una de saldo, el promedio te miente y el p90 te avisa. Se reporta también la <strong>tasa de acierto de caché</strong>, que es la palanca de margen más directa de vigilar.</p>
+      <p>La consecuencia para el pricing: con una tarifa plana por unidad, la cola pesada sangra el margen. Si el 10% más caro se come una porción grande del precio de venta, cada consulta interpretativa te deja en rojo aunque el promedio cierre — por eso el p90 se mira <em>contra el precio</em>, no sólo contra el promedio.</p>
 
       <h2>El filo: procesada vs. resuelta</h2>
       <p>El evento se cuenta como <strong>consulta procesada</strong> — objetiva y contable: todo entrante que el bot intenta, lo resuelva o lo escale a un humano. Aparte se reporta el costo por <strong>consulta resuelta</strong> para vigilar la calidad. Pero <strong>el precio se ata a la procesada, nunca a la resuelta</strong>: “resuelta” es subjetivo y se presta a disputa con el cliente. Es el mismo principio de la sección 6 del plan, acá vuelto operativo.</p>
 
-      <div class="callout"><strong>Por qué importa.</strong> Con este número medido, el modelo financiero (pestaña 03) deja de correr con magnitudes de referencia: podés fijar el precio por unidad con un colchón sobre el costo cargado, y recién ahí las decisiones de pricing —incluida USD vs. ARS— dejan de ser intuición. Es el entregable central del piloto de la cerealera.</div>
+      <div class="callout"><strong>Por qué importa.</strong> Con este número medido, el modelo financiero (pestaña 03) deja de correr con magnitudes de referencia: el costo de servir (inferencia + soporte) que hoy es un placeholder en la pestaña 03 se reemplaza por este costo totalmente cargado real, tras las primeras semanas del piloto. Recién ahí el precio por unidad se fija con un colchón sobre el costo cargado, y las decisiones de pricing —incluida USD vs. ARS— dejan de ser intuición. Es el entregable central del piloto de la cerealera.</div>
     </section>
 
   </main>
