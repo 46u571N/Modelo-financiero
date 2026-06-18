@@ -68,6 +68,7 @@
   .plan tr:nth-child(even) td{background:var(--surface-2);}
   .plan td:first-child{font-weight:600;color:var(--blue-deep);}
   .plan .callout{background:var(--amber-tint);border-left:4px solid #C9962E;border-radius:0 8px 8px 0;padding:12px 16px;margin:14px 0;font-size:13.5px;color:#6B4A12;line-height:1.55;}
+  .plan .status{background:var(--blue-tint);border:1px solid var(--blue-tint-2);border-left:4px solid var(--blue);border-radius:0 10px 10px 0;padding:12px 16px;margin:0 0 6px;font-size:13px;color:var(--blue-deep);line-height:1.55;}
   .plan .flow{text-align:center;font-family:'DM Mono',monospace;color:var(--blue);font-weight:500;margin:6px 0;}
   .plan .flow .arr{color:var(--faint);}
   .plan .meta{color:var(--muted);font-style:italic;font-size:13px;}
@@ -164,8 +165,21 @@
   .modelo .heat td.rowh{background:var(--surface-2);font-family:'DM Mono',monospace;color:var(--blue-deep);font-weight:500;text-align:right;}
   .modelo .heat .cell{font-family:'DM Mono',monospace;font-weight:500;}
   .modelo .moneda{margin-left:auto;display:flex;gap:6px;}
-  .modelo .mbtn{appearance:none;border:1.5px solid var(--line-strong);background:var(--surface);color:var(--ink);font-family:inherit;font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:8px;cursor:pointer;}
-  .modelo .mbtn[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .modelo .mbtn,.modelo .scenbtn{appearance:none;border:1.5px solid var(--line-strong);background:var(--surface);color:var(--ink);font-family:inherit;font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:8px;cursor:pointer;}
+  .modelo .mbtn[aria-pressed="true"],.modelo .scenbtn[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .modelo .scenrow{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 14px;}
+  .modelo .scenlbl{font-size:13px;font-weight:700;color:var(--ink);}
+  .modelo .scenbtns{display:flex;gap:6px;}
+  .modelo .scenhint{font-size:11.5px;color:var(--faint);flex:1;min-width:160px;}
+  .modelo .fijos-box{margin-top:16px;}
+  .modelo .fijos-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;font-size:13.5px;font-weight:600;margin-bottom:10px;}
+  .modelo .fijos-total{font-weight:500;color:var(--muted);font-size:13px;}
+  .modelo .fijos-total strong{color:var(--blue-deep);font-family:'DM Mono',monospace;font-size:14px;}
+  .modelo .fijos-grid{display:grid;grid-template-columns:1fr;gap:8px;}
+  @media(min-width:640px){.modelo .fijos-grid{grid-template-columns:1fr 1fr;}}
+  .modelo .fijos-grid label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--ink);background:var(--surface-2);padding:7px 11px;border-radius:9px;}
+  .modelo .fijos-grid input[type=number]{width:104px;}
+  .modelo .fijos-note{font-size:11.5px;color:var(--faint);margin:10px 0 0;line-height:1.5;}
   .modelo .foot{margin-top:30px;font-size:12px;color:var(--faint);max-width:74ch;border-top:1px solid var(--line);padding-top:16px;}
   .modelo .foot strong{color:var(--muted);}
 
@@ -223,6 +237,8 @@
         <p class="lede">Plataforma de inteligencia empresarial especializada por dominios, para sectores regulados. v3 — producto, compliance legal, monetización, canal, OEM y finanzas.</p>
         <div class="rule"></div>
       </div>
+
+      <div class="status"><strong>Documento beta.</strong> Las cifras y supuestos son de trabajo, no medidos. Se revisan con los datos que releve el piloto de la cerealera —costo por evento, esfuerzo de replicabilidad y retención—. Donde falta dato real, está marcado como tal, no inventado.</div>
 
       <h2>1. Resumen ejecutivo</h2>
       <p class="lead">Spartan no integra IA: <strong>vende una plataforma de inteligencia sobre los datos de un dominio, ya integrada al sistema del cliente y con la privacidad resuelta para sectores regulados.</strong></p>
@@ -314,6 +330,8 @@
       <p>Qué hace el Gateway: <strong>no solo anonimiza, sino que administra y documenta a dónde va cada dato y con qué instrumento legal.</strong> Ese registro y trazabilidad es lo vendible.</p>
       <div class="callout"><strong>Dos condiciones antes de venderlo.</strong> (1) Endurecer la capa de Tomás (tokens de demo secuenciales, el ternario muerto que siempre devolvía “SEGURO”, la contradicción del bearer auth). (2) Vender controles + auditabilidad, no garantía legal: el cliente y su asesor certifican; el alcance pasa por abogado.</div>
 
+      <div class="callout"><strong>Señal del piloto: validación de la tesis + requisito técnico.</strong> En la cerealera ya apareció el patrón: el cliente <strong>no nos deja ver sus bases</strong> y nos entrega los datos por partes, como vistas. Esto <em>valida</em> que la resistencia a abrir el dato es el problema real (justo lo que el Gateway y el on-premise resuelven). Y define un requisito concreto: el sistema tiene que poder trabajar sobre <strong>vistas parciales que el cliente entrega de a poco</strong>, no sobre acceso total a la base. Es, además, parte del cuello de entrega de la sección 7.</div>
+
       <h2>6. Modelo de monetización</h2>
       <p>La base es modular —implementación, licencia, soporte e infraestructura por escenario—. Encima, el cobro por resultado como opción de primera clase.</p>
       <div class="tablewrap"><table>
@@ -375,16 +393,19 @@
 
       <div class="callout"><strong>Hueco conocido: la máquina de adquisición.</strong> Esta sección tiene los <em>motores</em> de venta (directo → canal → OEM), pero no la <em>máquina</em> de conseguir clientes: pipeline, velocidad comercial e ICP afilado están sin desarrollar. Es deliberado — un plan de “cómo llegar a los próximos 20 clientes” no se diseña en un documento, se descubre vendiendo. La cerealera es el primer dato real de go-to-market: no entró por una máquina de pipeline, entró por relación / canal ERP. Esta sección se completa con lo que deje el piloto —qué canal convirtió, costo de adquisición real, y qué perfil de cliente (ICP) cierra más fácil—, no antes, para no construir una estrategia de pipeline sobre supuestos.</div>
 
+      <div class="callout"><strong>El otro cuello: la velocidad de entrega, no sólo la venta.</strong> El crecimiento no lo limita sólo conseguir clientes ni sólo la capacidad del equipo (tres personas, ~8 semanas por integración). Hay un tercer factor que el piloto ya destapó: <strong>cuán rápido el IT del cliente entrega los accesos a los datos</strong>. Como buena parte de esas 8 semanas es <em>espera</em> del lado del cliente y no trabajo activo nuestro, las integraciones <strong>pueden solaparse</strong> — el techo real de clientes nuevos por año y cuántas integraciones soportamos en paralelo se miden en el piloto, no se fijan acá.</div>
+
       <h2>8. Licencia, servicios y soporte</h2>
       <ul>
         <li><strong>Licencia:</strong> uso del software, IP siempre nuestra; base por sede + volumen, módulo de vertical aparte del core.</li>
         <li><strong>Servicios profesionales:</strong> implementación, integración, migración/OCR, capacitación. Facturados aparte, ingreso puntual.</li>
-        <li><strong>Soporte:</strong> recurrente, en niveles.</li>
+        <li><strong>Soporte:</strong> recurrente, en niveles — cómo se factura depende del despliegue: <strong>incluido en la cuota</strong> en nube / suscripción (escenario A; sólo el nivel premium se cobra aparte), o <strong>contrato anual separado</strong> (% de la licencia) en on-premise (escenarios B y C).</li>
       </ul>
       <h3>Protección de IP en on-premise (escenarios B y C)</h3>
       <p>La IP es nuestra incluso cuando el binario vive en el cliente. Mecanismos: license key criptográfica con vencimiento, binario containerizado, ofuscación, chequeo periódico.</p>
       <div class="callout"><strong>El filo crítico: el chequeo no puede ser un phone-home en tiempo real.</strong> Contradice la promesa de air-gap del pitch de salud. La validación de licencia tiene que ser offline / criptográfica y periódica, nunca un canal que pueda exfiltrar dato.</div>
       <h3>Niveles de soporte</h3>
+      <p>Los niveles definen el <em>nivel de servicio</em>, no necesariamente una línea de cobro aparte. El porcentaje de abajo es el ancla de precio <strong>on-premise</strong>, donde el soporte es un contrato anual separado de la licencia. En <strong>nube (suscripción)</strong> el básico/estándar va <strong>incluido en la cuota</strong> y sólo el premium (SLA, canal dedicado) se cobra como adicional.</p>
       <div class="tablewrap"><table>
         <thead><tr><th>Nivel</th><th>Ancla (% lic./año)</th><th>Canal y horario</th><th>Respuesta objetivo</th></tr></thead>
         <tbody>
@@ -581,7 +602,7 @@
               <div class="chips" id="chips">
                 <div class="chip" data-c="impl"><div class="c-name"><span class="dot"></span>Implementación</div><div class="c-meta">único</div></div>
                 <div class="chip" data-c="lic"><div class="c-name"><span class="dot"></span>Licencia</div><div class="c-meta">recurrente</div></div>
-                <div class="chip" data-c="sop"><div class="c-name"><span class="dot"></span>Soporte</div><div class="c-meta">recurrente</div></div>
+                <div class="chip" data-c="sop"><div class="c-name"><span class="dot"></span>Soporte</div><div class="c-meta" id="sopMeta">recurrente</div></div>
                 <div class="chip" data-c="infra"><div class="c-name"><span class="dot"></span>Infraestructura</div><div class="c-meta" id="infraMeta">—</div></div>
               </div>
               <div class="spec"><p class="s-k">Estructura de licencia</p><p class="s-v" id="licModel"></p></div>
@@ -632,16 +653,41 @@
         <h2 style="display:flex;align-items:center;">Supuestos (editar)
           <span class="moneda"><button class="mbtn" data-m="USD" aria-pressed="true">USD</button><button class="mbtn" data-m="ARS" aria-pressed="false">ARS</button></span>
         </h2>
+        <div class="scenrow">
+          <span class="scenlbl">Escenario:</span>
+          <span class="scenbtns" id="scenSel">
+            <button class="scenbtn" data-scen="pesimista">Pesimista</button>
+            <button class="scenbtn" data-scen="base" aria-pressed="true">Base</button>
+            <button class="scenbtn" data-scen="optimista">Optimista</button>
+          </span>
+          <span class="scenlbl" style="margin-left:6px;">Segmentos:</span>
+          <span class="scenbtns" id="segToggle">
+            <button class="scenbtn" data-seg="all" aria-pressed="true">Todos</button>
+            <button class="scenbtn" data-seg="0" aria-pressed="true">Quiosco</button>
+            <button class="scenbtn" data-seg="1" aria-pressed="true">Intermedio</button>
+            <button class="scenbtn" data-seg="2" aria-pressed="true">Grande</button>
+          </span>
+        </div>
+        <p class="fijos-note" style="margin:-4px 0 12px;">El <strong>escenario</strong> carga un combo completo. Los <strong>segmentos</strong> prenden o apagan cada tamaño: apagado pone ese segmento en 0 — sirve para estimar apuntando a uno solo. “Todos”, o volver a prenderlo, restaura los valores.</p>
         <div style="overflow-x:auto;">
           <table id="inTable">
             <thead><tr><th>Supuesto</th><th class="seg">Quiosco</th><th class="seg">Intermedio</th><th class="seg">Grande</th></tr></thead>
             <tbody id="inBody"></tbody>
           </table>
         </div>
-        <div class="fixedrow">
-          <label for="fijos">Costos fijos mensuales del negocio</label>
-          <input type="number" id="fijos" value="9000" step="100" min="0">
-          <span class="mono" id="fijosCur" style="color:var(--faint);font-size:12px;">USD</span>
+        <div class="fijos-box">
+          <div class="fijos-head">
+            <span>Costos fijos mensuales del negocio</span>
+            <span class="fijos-total">Total: <strong id="fijosTotal">—</strong> <span class="mono" id="fijosCur">USD</span>/mes</span>
+          </div>
+          <div class="fijos-grid" id="fijosGrid">
+            <label>Sueldos del equipo<input type="number" data-f="sueldos" step="100" min="0"></label>
+            <label>Herramientas y servicios<input type="number" data-f="herramientas" step="50" min="0"></label>
+            <label>Infraestructura base<input type="number" data-f="infra" step="50" min="0"></label>
+            <label>Oficina / administrativos<input type="number" data-f="oficina" step="50" min="0"></label>
+            <label>Otros fijos<input type="number" data-f="otros" step="50" min="0"></label>
+          </div>
+          <p class="fijos-note">Lo que pagás cada mes con cero clientes. El costo de servir a cada cliente (inferencia + soporte) va arriba, por segmento — no se cuenta acá.</p>
         </div>
       </div>
 
@@ -659,9 +705,10 @@
         <h2>Cartera y equilibrio</h2>
         <div class="cartera">
           <div class="stat"><div class="k">Contribución mensual total</div><div class="v pos" id="contribTotal">—</div></div>
-          <div class="stat"><div class="k">Resultado mensual del negocio</div><div class="v" id="resultado">—</div></div>
+          <div class="stat"><div class="k">Resultado del negocio (ganancia neta)</div><div class="v" id="resultado">—</div><div class="be" id="resultadoAnual" style="margin-top:3px;"></div></div>
         </div>
         <p class="be" id="breakeven"></p>
+        <p class="be" style="margin-top:4px;">El costo de servir se mantiene en el valor de referencia en los tres escenarios — es el número que confirma el piloto. Para estresar el costo, editalo a mano y mirá cómo cae el margen.</p>
       </div>
 
       <div class="card">
@@ -686,7 +733,13 @@
       </div>
 
       <div class="card">
-        <h2 id="sensTitle">Sensibilidad — LTV/CAC del intermedio (churn × ARPU)</h2>
+        <h2 style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;"><span id="sensTitle">Sensibilidad — LTV/CAC del intermedio (churn × ARPU)</span>
+        <span class="segsel" id="heatSel" style="margin-left:auto;display:flex;gap:6px;">
+          <button class="mbtn" data-hseg="0">Quiosco</button>
+          <button class="mbtn" data-hseg="1" aria-pressed="true">Intermedio</button>
+          <button class="mbtn" data-hseg="2">Grande</button>
+        </span>
+      </h2>
         <div style="overflow-x:auto;"><table class="heat" id="heat"></table></div>
         <p class="be">Verde ≥ 3x sano · ámbar 1–3x ajustado · rojo &lt; 1x no cierra.</p>
       </div>
@@ -805,11 +858,19 @@
     let cobroV;
     if(s.etapa==="piloto") cobroV="<strong>Piloto: cobrar como proyecto.</strong> El modelo elegido ("+LABELS.cobro[s.cobro]+") es el diseño a validar; el valor por "+ev+" se fija recién con el costo medido.";
     else cobroV="<strong>"+LABELS.cobro[s.cobro]+":</strong> "+cobroDesc(s.cobro, ev);
-    let sup;
-    if(s.segmento==="quiosco") sup="<strong>Básico.</strong> Parches, actualizaciones y mesa de ayuda en horario hábil (~18% de la licencia/año).";
-    else if(s.segmento==="intermedio") sup="<strong>Estándar.</strong> Monitoreo proactivo + revisiones periódicas (~22%).";
-    else sup="<strong>Premium</strong> con SLA contractual y canal dedicado (~27%).";
-    if(code==="B"||code==="C"||code==="B/C") sup += " Cotizar por encima: cada entorno on-premise es distinto.";
+    const tier = s.segmento==="quiosco"?"Básico":(s.segmento==="intermedio"?"Estándar":"Premium");
+    const pct  = s.segmento==="quiosco"?"~18%":(s.segmento==="intermedio"?"~22%":"~27%");
+    let sup, sopMode, sopMeta;
+    if(code==="A"){
+      sopMode="incluido"; sopMeta="incluido en la cuota";
+      sup="<strong>"+tier+", incluido en la cuota.</strong> En nube (suscripción) el soporte básico va dentro del precio mensual; sólo el nivel premium (SLA, canal dedicado) se cobra como adicional.";
+    } else if(code==="B"||code==="C"){
+      sopMode="aparte"; sopMeta="aparte · "+pct+" de licencia";
+      sup="<strong>"+tier+", contrato aparte ("+pct+" de la licencia/año).</strong> On-premise: el soporte y mantenimiento se factura como contrato anual separado de la licencia. Cotizar por encima: cada entorno es distinto.";
+    } else {
+      sopMode="cond"; sopMeta="según despliegue";
+      sup="<strong>"+tier+", según despliegue.</strong> Incluido en la cuota si va a la nube; contrato anual aparte (% de la licencia) si es on-premise. Dejarlo como cláusula del contrato.";
+    }
     let serv;
     if(s.etapa==="piloto") serv="Implementación facturada <strong>como proyecto</strong> + medición de costos reales durante el piloto.";
     else serv="Tarifa fija de implementación + integración a sus sistemas";
@@ -838,7 +899,7 @@
     }
     let measure=null;
     if(s.etapa==="piloto") measure=["Costo real de inferencia por "+ev,"Mezcla de consultas: livianas vs. pesadas","Volumen mensual efectivo","Costo de soporte del entorno"];
-    return {code,desc,comps,infraMeta,ev,lic,cobroV,sup,serv,flags,measure};
+    return {code,desc,comps,infraMeta,ev,lic,cobroV,sup,sopMode,sopMeta,serv,flags,measure};
   }
   function strip(html){ return html.replace(/<[^>]+>/g,""); }
   function render(){
@@ -848,9 +909,10 @@
     root.querySelector("#scenDesc").textContent = r.desc;
     root.querySelector("#eventoVal").textContent = r.ev;
     root.querySelector("#scenCode").style.fontSize = r.code.length>2 ? "15px" : "22px";
-    const chipState={impl:"true",lic:"true",sop:"true",infra:r.comps.infra==="on"?"true":(r.comps.infra==="off"?"false":"cond")};
+    const chipState={impl:"true",lic:"true",sop:r.sopMode==="cond"?"cond":"true",infra:r.comps.infra==="on"?"true":(r.comps.infra==="off"?"false":"cond")};
     root.querySelectorAll(".chip").forEach(ch=>ch.setAttribute("data-on", chipState[ch.dataset.c]));
     root.querySelector("#infraMeta").textContent = r.infraMeta;
+    root.querySelector("#sopMeta").textContent = r.sopMeta;
     root.querySelector("#licModel").innerHTML = r.lic;
     root.querySelector("#cobroVal").innerHTML = r.cobroV;
     root.querySelector("#supTier").innerHTML = r.sup;
@@ -861,7 +923,7 @@
     summaryText = buildSummary(r);
   }
   function buildSummary(r){
-    const comps = `Implementación ✓ · Licencia ✓ · Soporte ✓ · Infraestructura ${r.comps.infra==="on"?"✓":(r.comps.infra==="off"?"✗ (la pone el cliente)":"condicional")}`;
+    const comps = `Implementación ✓ · Licencia ✓ · Soporte (${r.sopMeta}) · Infraestructura ${r.comps.infra==="on"?"✓":(r.comps.infra==="off"?"✗ (la pone el cliente)":"condicional")}`;
     let out = "CONFIGURACIÓN DE EMPAQUE COMERCIAL — Plataforma Spartan IT\n(generado con el árbol de decisión)\n\n";
     out += "ENTRADA\n";
     out += "· Residencia del dato: "+LABELS.residencia[state.residencia]+"\n";
@@ -925,10 +987,54 @@
   const state={
     arpu:[250,1500,5000], inf:[35,220,800], sop:[12,110,450],
     cac:[150,1800,9000], impl:[0,1500,6000], churn:[5,3,1.5], clientes:[40,12,3],
-    fijos:9000, moneda:"USD"
+    fijos:9000, fijosItems:{sueldos:6000,herramientas:800,infra:1200,oficina:700,otros:300}, moneda:"USD"
   };
   let SYM="$";
   let selSeg=1;
+  let selHeat=1;
+  let activeScenario="base";
+  const SCENARIOS={
+    pesimista:{ clientes:[15,4,1],  arpu:[200,1000,4000], churn:[7,4,2.5], fijosItems:{sueldos:5000,herramientas:600,infra:800,oficina:600,otros:0} },
+    base:     { clientes:[40,12,3], arpu:[250,1500,5000], churn:[5,3,1.5], fijosItems:{sueldos:6000,herramientas:800,infra:1200,oficina:700,otros:300} },
+    optimista:{ clientes:[80,25,6], arpu:[350,2200,6500], churn:[3,2,1],   fijosItems:{sueldos:12000,herramientas:1200,infra:1800,oficina:1000,otros:0} }
+  };
+  function applyScenario(name){
+    const sc=SCENARIOS[name]; if(!sc) return;
+    activeScenario=name;
+    state.clientes=sc.clientes.slice();
+    state.arpu=sc.arpu.slice();
+    state.churn=sc.churn.slice();
+    state.fijosItems=Object.assign({},sc.fijosItems);
+    recalcFijos();
+    root.querySelectorAll("#inBody input").forEach(inp=>{
+      const k=inp.dataset.k, i=+inp.dataset.i;
+      if(Array.isArray(state[k])) inp.value=state[k][i];
+    });
+    syncFijosInputs();
+    for(let i=0;i<3;i++) captureSeg(i);
+    recomputeSegOn(); updateSegButtons();
+    root.querySelectorAll("#scenSel button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.scen===name?"true":"false"));
+    render();
+  }
+  function clearScenario(){ if(!activeScenario) return; activeScenario=null; root.querySelectorAll("#scenSel button").forEach(b=>b.setAttribute("aria-pressed","false")); }
+  function recalcFijos(){ state.fijos=Object.values(state.fijosItems).reduce((a,b)=>a+(parseFloat(b)||0),0); }
+  function syncFijosInputs(){
+    root.querySelectorAll("#fijosGrid input").forEach(inp=>{ inp.value=state.fijosItems[inp.dataset.f]; });
+    const ft=root.querySelector("#fijosTotal"); if(ft) ft.textContent=money(state.fijos);
+  }
+  const segOn=[true,true,true];
+  const segMem=[{},{},{}];
+  const SEGKEYS=DRIVERS.map(d=>d.k);
+  function captureSeg(i){ const m={}; SEGKEYS.forEach(k=>{ m[k]=state[k][i]; }); segMem[i]=m; }
+  function recomputeSegOn(){ for(let i=0;i<3;i++) segOn[i]=SEGKEYS.some(k=>(parseFloat(state[k][i])||0)!==0); }
+  function syncSegInputs(i){ root.querySelectorAll('#inBody input[data-i="'+i+'"]').forEach(inp=>{ if(Array.isArray(state[inp.dataset.k])) inp.value=state[inp.dataset.k][i]; }); }
+  function updateSegButtons(){ root.querySelectorAll("#segToggle button").forEach(b=>{ const s=b.dataset.seg; const on=(s==="all")?(segOn[0]&&segOn[1]&&segOn[2]):segOn[+s]; b.setAttribute("aria-pressed", on?"true":"false"); }); }
+  function toggleSeg(i){
+    if(segOn[i]){ captureSeg(i); SEGKEYS.forEach(k=>{ state[k][i]=0; }); }
+    else { const m=segMem[i]||{}; SEGKEYS.forEach(k=>{ state[k][i]=(m[k]!=null)?m[k]:0; }); }
+    syncSegInputs(i); recomputeSegOn(); updateSegButtons(); clearScenario(); render();
+  }
+  function allSegsOn(){ for(let i=0;i<3;i++){ if(!segOn[i]){ const m=segMem[i]||{}; SEGKEYS.forEach(k=>{ state[k][i]=(m[k]!=null)?m[k]:0; }); syncSegInputs(i); } } recomputeSegOn(); updateSegButtons(); render(); }
   function money(v){ return SYM+Math.round(v).toLocaleString('es-AR'); }
   function compute(){
     const r={cs:[],contrib:[],margpct:[],vida:[],ltv:[],ltvcac:[],payback:[],arr:[],contribSeg:[],be:[]};
@@ -961,7 +1067,9 @@
     });
     tb.addEventListener("input",e=>{
       const t=e.target; if(t.tagName!=="INPUT")return;
-      const v=parseFloat(t.value); state[t.dataset.k][+t.dataset.i]=isNaN(v)?0:v; render();
+      const i=+t.dataset.i, v=parseFloat(t.value);
+      state[t.dataset.k][i]=isNaN(v)?0:v;
+      recomputeSegOn(); if(segOn[i]) captureSeg(i); updateSegButtons(); clearScenario(); render();
     });
   }
   function clsLtv(x){ return x>=3?"ok":(x<1?"bad":"mid"); }
@@ -987,9 +1095,12 @@
       tr.innerHTML=cells; tb.appendChild(tr);
     });
     root.querySelector("#contribTotal").textContent=money(r.contribTotal);
+    const ftot=root.querySelector("#fijosTotal"); if(ftot) ftot.textContent=money(state.fijos);
     const res=root.querySelector("#resultado");
     res.textContent=(r.resultado<0?"-":"")+money(Math.abs(r.resultado));
     res.className="v "+(r.resultado>=0?"pos":"neg");
+    const ra=root.querySelector("#resultadoAnual");
+    if(ra) ra.textContent="≈ "+(r.resultado<0?"-":"")+money(Math.abs(r.resultado*12))+" / año";
     root.querySelector("#breakeven").innerHTML=
       "Clientes de equilibrio si todo fuera de un segmento: "+
       SEG.map((s,i)=>`<b>${s}</b> ${r.be[i]==null?"—":r.be[i]}`).join(" · ");
@@ -1023,38 +1134,52 @@
     s+=`</svg>`;
     root.querySelector("#chart").innerHTML=s;
   }
+  function niceArpu(v){
+    if(v<500) return Math.round(v/5)*5;
+    if(v<2000) return Math.round(v/25)*25;
+    if(v<10000) return Math.round(v/50)*50;
+    return Math.round(v/100)*100;
+  }
   function drawHeat(){
-    const cs=state.inf[1]+state.sop[1], cac=state.cac[1];
-    const arpus=[800,1100,1500,2000,2500], churns=[1,2,3,4,5,6,8];
+    const i=selHeat;
+    const cs=state.inf[i]+state.sop[i], cac=state.cac[i];
+    const center=state.arpu[i];
+    const arpus=[0.5,0.75,1,1.3,1.6].map(f=>niceArpu(center*f));
+    const churns=[1,2,3,4,5,6,8];
     let h=`<thead><tr><th>churn ↓ / ARPU →</th>${arpus.map(a=>`<th>${SYM}${a.toLocaleString('es-AR')}</th>`).join("")}</tr></thead><tbody>`;
     churns.forEach(ch=>{ h+=`<tr><td class="rowh">${ch}%</td>`;
       arpus.forEach(a=>{ const v=cac>0?((a-cs)*(1/(ch/100)))/cac:0; const c=clsLtv(v);
         h+=`<td class="cell ${c}">${v.toFixed(1)}x</td>`; }); h+="</tr>"; });
     h+="</tbody>"; root.querySelector("#heat").innerHTML=h;
-    root.querySelector("#sensTitle").textContent="Sensibilidad — LTV/CAC del "+SEG[1]+" (churn × ARPU)";
+    root.querySelector("#sensTitle").textContent="Sensibilidad — LTV/CAC del "+SEG[i]+" (churn × ARPU)";
   }
   function buildSummary(r){
-    let o="MODELO FINANCIERO — Spartan IT (interactivo, "+state.moneda+")\n\nSUPUESTOS (Quiosco / Intermedio / Grande)\n";
+    const escLbl={pesimista:"Pesimista",base:"Base",optimista:"Optimista"}[activeScenario]||"Personalizado";
+    let o="MODELO FINANCIERO — Spartan IT (interactivo, "+state.moneda+")\nEscenario: "+escLbl+"\n\nSUPUESTOS (Quiosco / Intermedio / Grande)\n";
     o+="· ARPU: "+state.arpu.map(money).join(" / ")+"\n";
     o+="· Costo servir: "+r.cs.map(money).join(" / ")+"\n";
     o+="· CAC: "+state.cac.map(money).join(" / ")+"  | Implementación: "+state.impl.map(money).join(" / ")+"\n";
     o+="· Churn mensual: "+state.churn.map(v=>v+"%").join(" / ")+"  | Clientes: "+state.clientes.join(" / ")+"\n";
-    o+="· Costos fijos: "+money(state.fijos)+"\n\nRESULTADOS\n";
+    const fi=state.fijosItems;
+    o+="· Costos fijos: "+money(state.fijos)+" /mes (sueldos "+money(fi.sueldos)+" · herramientas "+money(fi.herramientas)+" · infra "+money(fi.infra)+" · oficina "+money(fi.oficina)+(fi.otros?" · otros "+money(fi.otros):"")+")\n\nRESULTADOS\n";
     o+="· Margen contribución: "+r.contrib.map(money).join(" / ")+"\n";
     o+="· LTV: "+r.ltv.map(money).join(" / ")+"\n";
     o+="· LTV/CAC: "+r.ltvcac.map(v=>v.toFixed(1)+"x").join(" / ")+"\n";
     o+="· Payback (meses): "+r.payback.map(v=>v==null?"—":v.toFixed(1)).join(" / ")+"\n";
     o+="· Contribución por segmento: "+r.contribSeg.map(money).join(" / ")+"\n\nCARTERA\n";
-    o+="· Contribución total: "+money(r.contribTotal)+"  | Resultado mensual: "+(r.resultado<0?"-":"")+money(Math.abs(r.resultado))+"\n";
+    o+="· Contribución total: "+money(r.contribTotal)+"\n";
+    o+="· Resultado del negocio (ganancia neta): "+(r.resultado<0?"-":"")+money(Math.abs(r.resultado))+" /mes  ≈ "+(r.resultado<0?"-":"")+money(Math.abs(r.resultado*12))+" /año\n";
     o+="\nPARA RETOMAR: pegá este bloque para que Claude siga con montos, contrato o el deck.";
     return o;
   }
   root.querySelectorAll(".mbtn").forEach(b=>b.addEventListener("click",()=>{
+    if(!b.dataset.m) return;
     state.moneda=b.dataset.m; SYM="$";
     root.querySelectorAll(".mbtn").forEach(x=>x.setAttribute("aria-pressed", x===b?"true":"false"));
     root.querySelector("#fijosCur").textContent=state.moneda; render();
   }));
-  root.querySelector("#fijos").addEventListener("input",e=>{ const v=parseFloat(e.target.value); state.fijos=isNaN(v)?0:v; render(); });
+  const fijosGrid=root.querySelector("#fijosGrid");
+  if(fijosGrid) fijosGrid.addEventListener("input",e=>{ const t=e.target; if(t.tagName!=="INPUT")return; state.fijosItems[t.dataset.f]=parseFloat(t.value)||0; recalcFijos(); clearScenario(); render(); });
   const cb=root.querySelector("#copyBtnM");
   cb.addEventListener("click",async()=>{
     try{ await navigator.clipboard.writeText(summaryText||""); }
@@ -1123,7 +1248,13 @@
     root.querySelectorAll("#segSel button").forEach(x=>x.setAttribute("aria-pressed", x===b?"true":"false"));
     const r=compute(); drawCurves(r); renderPhrases(r);
   }));
-  buildInputs(); render();
+  const scenSel=root.querySelector("#scenSel");
+  if(scenSel) scenSel.addEventListener("click",e=>{ const b=e.target.closest("button"); if(b&&b.dataset.scen) applyScenario(b.dataset.scen); });
+  const segTog=root.querySelector("#segToggle");
+  if(segTog) segTog.addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b)return; if(b.dataset.seg==="all") allSegsOn(); else toggleSeg(+b.dataset.seg); });
+  const heatSel=root.querySelector("#heatSel");
+  if(heatSel) heatSel.addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b||b.dataset.hseg==null)return; selHeat=+b.dataset.hseg; root.querySelectorAll("#heatSel button").forEach(x=>x.setAttribute("aria-pressed", x===b?"true":"false")); drawHeat(); });
+  buildInputs(); recalcFijos(); syncFijosInputs(); captureSeg(0); captureSeg(1); captureSeg(2); recomputeSegOn(); updateSegButtons(); render();
 })();
 </script>
 </body>
