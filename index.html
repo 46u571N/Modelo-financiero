@@ -181,17 +181,17 @@
   @media(min-width:760px){.modelo .curvegrid{grid-template-columns:1fr 1fr;}}
   .modelo .curvettl{font-size:12px;color:var(--faint);font-weight:600;margin:0 0 4px;}
 
-  .modelo .glossary{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-top:24px;overflow:hidden;}
-  .modelo .glossary summary{cursor:pointer;padding:15px 20px;font-size:13.5px;font-weight:600;color:var(--blue-deep);list-style:none;display:flex;align-items:center;gap:9px;}
-  .modelo .glossary summary::-webkit-details-marker{display:none;}
-  .modelo .glossary summary::before{content:"+";font-family:'DM Mono',monospace;font-size:16px;color:var(--blue);width:14px;text-align:center;}
-  .modelo .glossary[open] summary::before{content:"\2013";}
-  .modelo .glossary summary:hover{background:var(--surface-2);}
-  .modelo .gloss-body{padding:2px 20px 18px;border-top:1px solid var(--line);}
-  .modelo .gloss-body dl{margin:0;}
-  .modelo .gloss-body dt{font-weight:700;font-size:13.5px;color:var(--ink);margin-top:14px;}
-  .modelo .gloss-body dd{margin:3px 0 0;font-size:13.5px;color:var(--muted);line-height:1.55;}
-  .modelo .gloss-note{margin:16px 0 0;font-size:12px;color:var(--faint);border-top:1px solid var(--line);padding-top:12px;}
+  .glossary{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-top:24px;overflow:hidden;}
+  .glossary summary{cursor:pointer;padding:15px 20px;font-size:13.5px;font-weight:600;color:var(--blue-deep);list-style:none;display:flex;align-items:center;gap:9px;}
+  .glossary summary::-webkit-details-marker{display:none;}
+  .glossary summary::before{content:"+";font-family:'DM Mono',monospace;font-size:16px;color:var(--blue);width:14px;text-align:center;}
+  .glossary[open] summary::before{content:"\2013";}
+  .glossary summary:hover{background:var(--surface-2);}
+  .gloss-body{padding:2px 20px 18px;border-top:1px solid var(--line);}
+  .gloss-body dl{margin:0;}
+  .gloss-body dt{font-weight:700;font-size:13.5px;color:var(--ink);margin-top:14px;}
+  .gloss-body dd{margin:3px 0 0;font-size:13.5px;color:var(--muted);line-height:1.55;}
+  .gloss-note{margin:16px 0 0;font-size:12px;color:var(--faint);border-top:1px solid var(--line);padding-top:12px;}
 
   /* shared copy button */
   .copy-btn{appearance:none;border:1.5px solid var(--blue);background:var(--blue);color:#fff;font-family:inherit;font-size:13.5px;font-weight:600;padding:11px 18px;border-radius:10px;cursor:pointer;transition:all .15s ease;}
@@ -210,6 +210,7 @@
       <button data-target="sec-plan" aria-current="true"><span class="n-num">01</span> Plan de negocio</button>
       <button data-target="sec-config"><span class="n-num">02</span> Configurador de empaque</button>
       <button data-target="sec-modelo"><span class="n-num">03</span> Modelo financiero</button>
+      <button data-target="sec-costo"><span class="n-num">04</span> Costo por evento</button>
     </nav>
     <div class="side-foot">Borrador de trabajo · v3 · confidencial. Las herramientas ordenan el empaque y la sensibilidad; los montos se fijan con el costo medido del piloto.</div>
   </aside>
@@ -269,6 +270,18 @@
           <tr><td>Municipio / Escuela AI</td><td>Narrativa</td><td>Público / educación</td><td>No abrir aún</td></tr>
         </tbody>
       </table></div>
+      <h3>El patrón: qué hace que un vertical califique</h3>
+      <p>La lista de módulos no es arbitraria — responde a un patrón. Un vertical entra en el catálogo de Spartan sólo si cumple las cuatro condiciones a la vez, y cada una alimenta una pieza del moat:</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Condición</th><th>Por qué importa</th><th>Laboratorio</th><th>Cerealera</th><th>Clínica</th></tr></thead>
+        <tbody>
+          <tr><td>Dato propietario</td><td>Un corpus que el cliente tiene y nadie más; es lo que hay para indexar.</td><td>✓</td><td>✓</td><td>✓</td></tr>
+          <tr><td>Software legado (sistema de registro)</td><td>Un LIS / ERP / HIS al que enchufarse: integración profunda = mitad del moat y barrera de entrada.</td><td>✓ LIS</td><td>✓ ERP</td><td>✓ HIS</td></tr>
+          <tr><td>Proceso repetitivo y costoso</td><td>Tarea de alto volumen y bajo valor que duele: es el dolor que paga.</td><td>✓</td><td>✓</td><td>✓</td></tr>
+          <tr><td>Peso regulatorio / dato sensible</td><td>Empuja a privacidad y compliance, la pieza más difícil de copiar y la que sube el precio.</td><td>✓ alto</td><td>parcial</td><td>✓ alto</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout"><strong>El patrón es también el filtro de foco.</strong> Un vertical que no cumple las cuatro condiciones no se abre todavía — por eso municipio y escuela quedan en “narrativa, no abrir aún”. Y la cuarta condición explica la secuencia: la cerealera, con dato no personal, es la prueba de replicabilidad de <em>menor fricción legal</em> (va a la nube sin el Gateway); laboratorio y clínica son las jugadas reguladas donde el moat de compliance pesa de verdad.</div>
       <h3>Configurabilidad sobre personalización</h3>
       <p>Configurar, no personalizar. Cada vertical se monta con configuración —motor de reglas, modelo de datos flexible, API-first—, no con desarrollo a medida sobre el código base. Si cada cliente toca el código, no hay plataforma: hay consultoría disfrazada.</p>
       <h3>Modular monolith, no microservicios</h3>
@@ -321,6 +334,17 @@
         <li><strong>Caché de respuestas frecuentes:</strong> ya lo hacemos con el caching semántico.</li>
         <li><strong>Colchón en el precio por unidad:</strong> que absorba fluctuaciones del costo del proveedor.</li>
       </ul>
+      <h3>El medidor: una fuente, tres proyecciones</h3>
+      <p>El mismo registro de eventos del bot sirve tres lecturas distintas según quién mira. Es <strong>una sola fuente, no tres productos</strong>: cambian la unidad y la audiencia, no el dato de base.</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Proyección</th><th>Unidad</th><th>Quién la ve</th><th>Qué se hace con ella</th></tr></thead>
+        <tbody>
+          <tr><td>Costo</td><td>tokens / USD</td><td>Interno (Spartan)</td><td>Nunca se muestra al cliente — revela el margen.</td></tr>
+          <tr><td>Consumo / facturación</td><td>eventos de negocio (factura, estudio, consulta)</td><td>El cliente</td><td>Es el cobro por unidad / créditos de este mismo capítulo.</td></tr>
+          <tr><td>ROI / ahorro</td><td>tiempo ahorrado, % de desvío</td><td>El cliente</td><td>Se regala como parte del producto, para sostener el precio.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout"><strong>No son tres módulos a vender.</strong> Tratar esto como tres productos multiplica el trabajo y diluye el foco. El dashboard de consumo/ROI se <em>regala</em> —un dashboard no es defendible; el moat es IA + integración + compliance—. El único medidor con cara propia realmente vendible es el registro de transferencias del Privacy Gateway (sección 5): ahí el cliente regulado paga por la trazabilidad para su propio cumplimiento, no por ver su consumo.</div>
       <div class="callout"><strong>El filo a desactivar en el cobro por resultado.</strong> Definir el evento como algo objetivo y contable (factura / documento / estudio procesado), no subjetivo (“consulta resuelta”). Y sólo después de medir el costo real por evento. La inferencia puede comerse del orden de un cuarto de los ingresos: tratarlo como objetivo de margen bruto a vigilar.</div>
 
       <h2>7. Go-to-market: directo → canal → OEM</h2>
@@ -348,6 +372,8 @@
       <p><strong>OEM:</strong> en vez de venderle a 100 laboratorios, le vendemos el motor a quien desarrolla el LIS / ERP / HIS y lo revende embebido:</p>
       <p class="flow">Spartan AI Engine<br><span class="arr">↓</span><br>Proveedor de LIS / ERP / HIS<br><span class="arr">↓</span><br>100 clientes finales</p>
       <div class="callout"><strong>Por qué OEM es el destino y no el próximo paso.</strong> Embeber el motor sube el listón de ingeniería (API/SDK limpio, white-label, multi-tenant, versionado, soporte al partner) y nos desintermedia del usuario final. Prerrequisito: core endurecido + 2-3 verticales probados.</div>
+
+      <div class="callout"><strong>Hueco conocido: la máquina de adquisición.</strong> Esta sección tiene los <em>motores</em> de venta (directo → canal → OEM), pero no la <em>máquina</em> de conseguir clientes: pipeline, velocidad comercial e ICP afilado están sin desarrollar. Es deliberado — un plan de “cómo llegar a los próximos 20 clientes” no se diseña en un documento, se descubre vendiendo. La cerealera es el primer dato real de go-to-market: no entró por una máquina de pipeline, entró por relación / canal ERP. Esta sección se completa con lo que deje el piloto —qué canal convirtió, costo de adquisición real, y qué perfil de cliente (ICP) cierra más fácil—, no antes, para no construir una estrategia de pipeline sobre supuestos.</div>
 
       <h2>8. Licencia, servicios y soporte</h2>
       <ul>
@@ -443,6 +469,7 @@
         <li><strong>Primer canal formal:</strong> sale de la cerealera (Tango/Bejerman) o se busca aparte.</li>
         <li><strong>Servicios:</strong> meta y tripwire de % de facturación por servicios.</li>
       </ol>
+      <div class="callout"><strong>Servicios — meta y tripwire (decisión 5).</strong> Tripwire en 35% de ingresos por servicios, pero no es un umbral fijo desde el día uno: en validación (cerealera) los servicios son 80–100% y está bien. Se activa en la transición (tras 2-3 clientes) y mide la <em>pendiente</em>, no la foto: la alarma no es “servicios altos” sino “cada cliente nuevo no depende menos de servicios que el anterior” — eso es no estar replicando. Meta de &lt;20% como destino, relajada el primer año. Leer junto con el churn: ambos son síntomas del mismo eje producto-vs-proyecto; el ratio de servicios es la señal <em>adelantada</em> (se ve desde el primer cliente), el churn es el que más pesa para la valuación pero se mide tarde. Desarrollo en la nota desplegable al final de esta sección.</div>
       <div class="tablewrap"><table>
         <thead><tr><th>Eje</th><th>Antes</th><th>Qué lo mueve ahora</th></tr></thead>
         <tbody>
@@ -453,6 +480,19 @@
           <tr><td>Ejecución</td><td>—</td><td>KPIs del piloto, modelo de sensibilidad, protección de IP, decisiones explícitas.</td></tr>
         </tbody>
       </table></div>
+
+      <details class="glossary">
+        <summary>Sobre el tripwire de servicios y su relación con el churn</summary>
+        <div class="gloss-body">
+          <p style="font-size:13.5px;color:var(--muted);margin:8px 0 4px;line-height:1.55;">Un <strong>tripwire</strong> es un umbral de alarma fijado de antemano: cuando se cruza, obliga a parar y mirar — no es un tope que prohíbe, es un disparador de revisión. El de servicios vigila no deslizarse de plataforma a consultora. Pero su lectura depende de la etapa:</p>
+          <dl>
+            <dt>Validación (hoy — cerealera)</dt><dd>Servicios 80–100% del ingreso, y está bien. El tripwire no aplica: lo que importa medir es el costo por evento y la replicabilidad.</dd>
+            <dt>Transición (tras 2-3 clientes replicados)</dt><dd>Empieza a importar, pero como tendencia, no como foto: la pregunta no es “¿servicios &gt;35% este mes?” sino “¿baja la proporción de servicios cliente a cliente?”. 90% → 70% → 50% va bien; si el cuarto cliente sigue en 80%, salta la alarma — cada venta es un proyecto nuevo, no estás replicando.</dd>
+            <dt>Plataforma (core probado, varios clientes)</dt><dd>Recién acá el 35% como número fijo tiene sentido: ya hay con qué reemplazar servicios (licencia + consumo) y un partner a quien derivar las integraciones a medida.</dd>
+          </dl>
+          <p class="gloss-note"><strong>Relación con el churn.</strong> El ratio de servicios y el churn son dos lecturas del mismo eje: producto-que-se-sostiene-solo vs. proyecto-a-medida. Si cada cliente necesita mucho servicio, el valor está en las horas y no en el software — el mismo defecto que después se manifiesta como churn alto. En régimen se mueven juntos; al principio se desacoplan (podés tener servicios altos y churn bajo, con el cliente recién implementado y conforme). La asimetría útil: el ratio de servicios se ve desde el primer cliente, el churn recién a los meses — por eso el de servicios funciona como señal <em>adelantada</em> del churn, que es el que más pesa para la valuación y el más difícil de arreglar.</p>
+        </div>
+      </details>
     </section>
 
     <!-- ============ CONFIGURADOR ============ -->
@@ -654,6 +694,46 @@
       <button class="copy-btn" id="copyBtnM">Copiar resumen para Claude</button>
 
       <p class="foot"><strong>Nota.</strong> Herramienta de sensibilidad, no pronóstico. Los valores cargados son magnitudes de referencia, no costos medidos: reemplazar con datos del piloto. El churn es el supuesto que más mueve el LTV — ser conservador.</p>
+    </section>
+
+    <!-- ============ COSTO POR EVENTO ============ -->
+    <section id="sec-costo" class="section plan">
+      <div class="sec-head">
+        <p class="eyebrow">Spartan IT · medición</p>
+        <h1>Costo por <span class="accent">evento</span></h1>
+        <p class="lede">El número que destraba todo el pricing. Mientras no exista, el precio por unidad es una apuesta. Esta sección explica qué se mide, cómo se mide bien y por qué importa — el detalle de implementación (SQL + helper de Laravel) va en archivos aparte para el repo.</p>
+        <div class="rule"></div>
+      </div>
+
+      <h2>Qué es un “evento”</h2>
+      <p>Un evento es <strong>una consulta entrante procesada</strong>: un mensaje que llega por WhatsApp y que el bot intenta resolver. Pero esa consulta no es una sola llamada — por dentro dispara varias: clasificar la intención, embeddear, recuperar contexto, generar la respuesta, a veces OCR. <strong>El costo del evento es la suma de todas esas llamadas dentro del mismo pedido</strong>, no sólo la del modelo que responde.</p>
+
+      <h2>Las tres capas del costo</h2>
+      <p>Medir sólo los tokens es el error común. El costo real tiene tres capas, y la de abajo es la que fija el piso del precio:</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Capa</th><th>Qué incluye</th><th>Comportamiento</th></tr></thead>
+        <tbody>
+          <tr><td>Marginal directo</td><td>Tokens del modelo + tarifa por mensaje de WhatsApp + OCR.</td><td>Sube con cada consulta.</td></tr>
+          <tr><td>Prorrateado de infra</td><td>Cloud Run + Postgres + amortización de inferencia local, dividido por las consultas del mes.</td><td>Baja con el volumen.</td></tr>
+          <tr><td>Totalmente cargado</td><td>Marginal + prorrateado.</td><td>El piso real para poner precio con colchón.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout">En bajo volumen —justo donde vas a estar al principio— la tarifa de WhatsApp y el prorrateo de infraestructura pueden pesar más que el LLM. Por eso el piso para fijar precio es el costo <strong>totalmente cargado</strong>, no los tokens sueltos.</div>
+
+      <h2>Tres cosas que no son obvias</h2>
+      <ol>
+        <li><strong>Leer el costo real, no estimarlo.</strong> La respuesta de la API trae el consumo exacto de tokens (entrada y salida). Si se usa caché de prompt, el token leído de caché cuesta distinto: se guarda aparte, o se subestima el ahorro del caché.</li>
+        <li><strong>Un acierto de caché no es gratis.</strong> Para buscar en el caché semántico hay que embeddear igual la consulta entrante, aunque después no se llame al modelo grande. La consulta determinística (un saldo) sí puede saltear el modelo por completo: clasificar + buscar en la base, costo casi nulo. <strong>Esa mezcla liviana/pesada es la que define el costo promedio.</strong></li>
+        <li><strong>Guardar qué modelo atendió cada paso.</strong> Es lo que después permite demostrar que rutear las tareas simples a un modelo barato y cachear las repetidas baja el costo de verdad — las palancas de margen (sección 6 del plan) dejan de ser teoría y pasan a ser un número.</li>
+      </ol>
+
+      <h2>Qué se reporta (y por qué el p90)</h2>
+      <p>El costo se reporta <strong>por tipo de consulta</strong> (saldo, stock, factura, interpretación), no como un único promedio. Y al lado del promedio se mira el <strong>percentil 90</strong>: si una de cada diez consultas es interpretativa y cuesta veinte veces una de saldo, el promedio te miente y el p90 te avisa. Se reporta también la <strong>tasa de acierto de caché</strong>, que es la palanca de margen más directa de vigilar.</p>
+
+      <h2>El filo: procesada vs. resuelta</h2>
+      <p>El evento se cuenta como <strong>consulta procesada</strong> — objetiva y contable: todo entrante que el bot intenta, lo resuelva o lo escale a un humano. Aparte se reporta el costo por <strong>consulta resuelta</strong> para vigilar la calidad. Pero <strong>el precio se ata a la procesada, nunca a la resuelta</strong>: “resuelta” es subjetivo y se presta a disputa con el cliente. Es el mismo principio de la sección 6 del plan, acá vuelto operativo.</p>
+
+      <div class="callout"><strong>Por qué importa.</strong> Con este número medido, el modelo financiero (pestaña 03) deja de correr con magnitudes de referencia: podés fijar el precio por unidad con un colchón sobre el costo cargado, y recién ahí las decisiones de pricing —incluida USD vs. ARS— dejan de ser intuición. Es el entregable central del piloto de la cerealera.</div>
     </section>
 
   </main>
